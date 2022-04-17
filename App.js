@@ -1,38 +1,51 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import React from 'react';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import * as React from 'react';
+import { Button, View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { StyleSheet } from 'react-native';
-import AgregaAlimentos from './AgregaAlimentos';
-import Pagina2 from './Pagina2';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-const Drawer = createDrawerNavigator();
-const App = () => (
-  <NavigationContainer>
-    <Drawer.Navigator initialRouteName="AgregaAlimentos">
-      <Drawer.Screen name="AgregaAlimentos" component={AgregaAlimentos}/>
-      <Drawer.Screen name="Página2" component={Pagina2}/>
-    </Drawer.Navigator>
-  </NavigationContainer>
-);
+function HomeScreen({ navigation }) {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Home Screen</Text>
+      <Button
+        title="Go to Details"
+        onPress={() => navigation.navigate('Details')}
+      />
+    </View>
+  );
+}
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+function DetailsScreen({ navigation }) {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Details Screen</Text>
+      <Button
+        title="Go to Details... again"
+        onPress={() => navigation.push('Details')}
+      />
+      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+      <Button
+        title="Go back to first screen in stack"
+        onPress={() => navigation.popToTop()}
+      />
+    </View>
+  );
+}
+
+const Stack = createNativeStackNavigator();
+
+function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Details" component={DetailsScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
 
 export default App;
