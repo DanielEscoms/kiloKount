@@ -98,6 +98,7 @@ const AgregaAlimentos = () => {
             placeholder='Introduce el alimento'
             onChangeText={setAlimentoBuscado}
           />
+          <Text>Prueba desde pc nuevo</Text>
           <Text>{alimentoBuscado}</Text>
           <Text>{calories}</Text>
           <Text>{carbohiratosTotalG}</Text>
