@@ -7,7 +7,7 @@ import { StyleSheet } from 'react-native';
 import AgregaAlimentos from './screens/AgregaAlimentos';
 import Pagina2 from './screens/Pagina2';
 
-//import firebase from './database/Firebase';
+import firebase from './database/Firebase';
 
 const Drawer = createDrawerNavigator();
 const App = () => (
