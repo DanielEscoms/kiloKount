@@ -1,42 +1,35 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import React from 'react';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
-import { StyleSheet } from 'react-native';
-import AgregaAlimentos from './screens/AgregaAlimentos';
-import Pagina2 from './screens/Pagina2';
+import 'react-native-gesture-handler';
+import React, { useEffect, useState } from 'react'
+import { NavigationContainer } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack'
+import { Login, Home, Registro } from './screens'
+import {decode, encode} from 'base-64'
+if (!global.btoa) {  global.btoa = encode }
+if (!global.atob) { global.atob = decode }
 
-import firebase from './database/Firebase';
+const Stack = createStackNavigator();
 
-const Drawer = createDrawerNavigator();
-const App = () => (
-  <NavigationContainer independent={true}>
-    <Drawer.Navigator options="false" initialRouteName="Agrega Alimentos" style={styles.container}>
-      <Drawer.Screen name="Agrega Alimentos" component={AgregaAlimentos}/>
-      <Drawer.Screen name="Pagina 2" component={Pagina2}/>
-    </Drawer.Navigator>
-  </NavigationContainer>
-);
+export default function App() {
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null)
 
-export default App;
-
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        { user ? (
+          <Stack.Screen name="Home">
+            {props => <Home {...props} extraData={user} />}
+          </Stack.Screen>
+        ) : (
+          <>
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Registro" component={Registro} />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}

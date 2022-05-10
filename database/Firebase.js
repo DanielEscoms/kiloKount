@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import * as firebase from 'firebase/compat';
 import firestore from 'firebase/compat/firestore';
+import auth from 'firebase/compat/auth';
 
 
 
@@ -11,9 +12,10 @@ const firebaseConfig = {
     storageBucket: "kilokount.appspot.com",
     messagingSenderId: "974942535219",
     appId: "1:974942535219:web:5604f23e7b906f9615ed46"
-    };
+};
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+    firebase.firestore();
+}
 
-firebase.initializeApp(firebaseConfig);
-firebase.firestore();
-
-export default firebase;
+export {firebase} ;
