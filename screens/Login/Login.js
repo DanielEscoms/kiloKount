@@ -21,6 +21,7 @@ export default function LoginScreen({navigation}) {
         signInWithEmailAndPassword(authentication, email, password)
         .then((response) => {
             console.log(response);
+            alert(`Se ha registrado correctamente.\nDatos de la cuenta:\n\n* Nombre: ${fullName}\n\n* E-mail: ${email}`);
             setIsSignedIn(true);
         })
         .catch((error) => {
@@ -85,7 +86,7 @@ export default function LoginScreen({navigation}) {
                     style={styles.input}
                     placeholderTextColor="#aaaaaa"
                     secureTextEntry
-                    placeholder='Password'
+                    placeholder='Contraseña'
                     onChangeText={(text) => setPassword(text)}
                     value={password}
                     underlineColorAndroid="transparent"
@@ -95,13 +96,13 @@ export default function LoginScreen({navigation}) {
                     <TouchableOpacity
                         style={styles.button}
                         onPress={() => onLogoutPress()}>
-                        <Text style={styles.buttonTitle}>Log out</Text>
+                        <Text style={styles.buttonTitle}>Cerrar sesión</Text>
                     </TouchableOpacity>
                     :
                     <TouchableOpacity
                         style={styles.button}
                         onPress={() => onLoginPress()}>
-                        <Text style={styles.buttonTitle}>Log in</Text>
+                        <Text style={styles.buttonTitle}>Iniciar sesión</Text>
                     </TouchableOpacity>
 
                 }

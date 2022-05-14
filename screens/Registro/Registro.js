@@ -7,8 +7,6 @@ import firebase from '../../database/Firebase';
 import { authentication } from '../../database/Firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
-/*import 'firebase/compat/auth';
-import 'firebase/compat/firestore';*/
 
 export default function RegistrationScreen({navigation}) {
     const [isSignedIn, setIsSignedIn] = useState(false);
@@ -16,22 +14,55 @@ export default function RegistrationScreen({navigation}) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [camposValidos, setCamposValidos] = useState(false);
 
     const onFooterLinkPress = () => {
-        navigation.navigate('Login')
+        navigation.navigate('Inicio sesión');
+    }
+
+    const compruebaCampos = () => {
+        
+        if (fullName == '') {
+            alert("Requiere de un nombre de usuario.");
+            return;
+        } else if(fullName.split(' ').length < 2){
+            alert("Introduzca apellido.");
+            return;
+        }
+        
+        if (email == '') {
+            alert("Requiere de un email.");
+            return;
+        } else if(!email.includes('@') || !email.split('@')[1].includes('.')){
+            alert("Introduzca un email válido.");
+            return;
+        }
+        
+        if (password.length < 6) {
+            alert("La contraseña ha de tener al menos 6 carácteres.");
+            return;
+        } else if (password !== confirmPassword) {
+            alert("Las contraseñas no son iguales.");
+            return;
+        }
+
+        setCamposValidos(true);
     }
 
     const onRegisterPress = () => { //cambiar nombre a alPulsarRegistro
-        if (password !== confirmPassword) {
-            alert("Las contraseñas no son iguales.")
+        
+        compruebaCampos();
+        if (!camposValidos) {
             return
         }
+
         /*Llamamos a la API Auth y createUserWithEmailAndPassword de Firebase (línea 25), que 
         crea una nueva cuenta que aparecerá en Firebase Console -> Tabla de autenticación.*/
         
         createUserWithEmailAndPassword(authentication, email, password)
         .then((response) => {
             console.log(response);
+            alert(`Se ha registrado correctamente.\nDatos de la cuenta:\n\n* Nombre: ${fullName}\n\n* E-mail: ${email}`);
             setIsSignedIn(true);
         })
         .catch((error) => {
@@ -81,7 +112,7 @@ export default function RegistrationScreen({navigation}) {
                 
                 <TextInput
                     style={styles.input}
-                    placeholder='Full Name'
+                    placeholder='Nombre y Apellido(s)'
                     placeholderTextColor="#aaaaaa"
                     onChangeText={(text) => setFullName(text)}
                     value={fullName}
@@ -101,7 +132,7 @@ export default function RegistrationScreen({navigation}) {
                     style={styles.input}
                     placeholderTextColor="#aaaaaa"
                     secureTextEntry
-                    placeholder='Password'
+                    placeholder='Contraseña'
                     onChangeText={(text) => setPassword(text)}
                     value={password}
                     underlineColorAndroid="transparent"
@@ -111,7 +142,7 @@ export default function RegistrationScreen({navigation}) {
                     style={styles.input}
                     placeholderTextColor="#aaaaaa"
                     secureTextEntry
-                    placeholder='Confirm Password'
+                    placeholder='Confirmar contraseña'
                     onChangeText={(text) => setConfirmPassword(text)}
                     value={confirmPassword}
                     underlineColorAndroid="transparent"
@@ -120,10 +151,10 @@ export default function RegistrationScreen({navigation}) {
                 <TouchableOpacity
                     style={styles.button}
                     onPress={() => onRegisterPress()}>
-                    <Text style={styles.buttonTitle}>Create account</Text>
+                    <Text style={styles.buttonTitle}>Crear cuenta</Text>
                 </TouchableOpacity>
                 <View style={styles.footerView}>
-                    <Text style={styles.footerText}>Already got an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Log in</Text></Text>
+                    <Text style={styles.footerText}>¿Ya tiene una cuenta? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Inicia sesión</Text></Text>
                 </View>
             </KeyboardAwareScrollView>
         </View>
