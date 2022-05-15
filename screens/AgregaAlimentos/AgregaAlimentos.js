@@ -6,14 +6,15 @@
 /* eslint-disable prettier/prettier */
 import * as React from 'react';
 import { Image, Text, StyleSheet, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Button, Input } from 'react-native-elements';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const AgregaAlimentos = () => {
   //llamadas axios a API
-  const [alimentoBuscado, setAlimentoBuscado] = useState("potato");
-  const [datos, setDatos] = useState([]);
+  const [alimentoBuscado, setAlimentoBuscado] = useState("");
+  const [arrayAlimentos, setArrayAlimentos] = useState([{"calories": 0, "carbohydrates_total_g": 0, "cholesterol_mg": 0, "fat_saturated_g": 0, "fat_total_g": 0, "fiber_g": 0, "name": "", "potassium_mg": 0, "protein_g": 0, "serving_size_g": 0, "sodium_mg": 0, "sugar_g": 0}]);
   const [calories, setCalories] = useState("");
   const [carbohiratosTotalG, setCarbohidratosTotalG] = useState("");
   const [colesterolMg, setColesterolMg] = useState("");
@@ -26,27 +27,9 @@ const AgregaAlimentos = () => {
   const [cantidadG, setCantidadG] = useState("");
   const [sodioMg, setSodioMg] = useState("");
   const [azucarG, setAzucarG] = useState("");
-  //const [imagenPerro, setImagenPerro] = useState();
   
-  /*useEffect(() =>{
-    getDatos();
-  },[])*/
+  //useEffect(() =>{ },[datos]);
   
-  
-  /*const getDatos = () => {
-    $.ajax({
-      method: 'GET',
-      url: `https://api.calorieninjas.com/v1/nutrition?query=${alimentoBuscado}`,
-      headers: { 'X-Api-Key': 'nLw46OBFPXRZtypyMJcJ6Q==h6CNwrcwmBhXEgOX'},
-      contentType: 'application/json',
-      success: function(result) {
-          console.log(result);
-      },
-      error: function ajaxError(jqXHR) {
-          console.error('Error: ', jqXHR.responseText);
-      },
-    });
-  }*/
   
   const options = { 
     method: 'GET', 
@@ -55,10 +38,21 @@ const AgregaAlimentos = () => {
   };
     
   const getDatos = () => {
+    if (alimentoBuscado == '') {
+      alert("Requiere un nombre de alimento.");
+      return;
+    }
+
     axios.request(options).then(function (response) {
     console.log(response.data);
-    setDatos(response.data.items);
-    console.log(response.data.items);
+    
+    if (response.data.items.length === 0) {
+      alert("El alimento buscado no es válido, por favor, pruebe con otro.");
+      return;
+    }
+    setArrayAlimentos(response.data.items);
+    console.log(arrayAlimentos);
+
     setCalories(response.data.items[0].calories);
     console.log(response.data.items[0].calories);
     setCarbohidratosTotalG(response.data.items[0].carbohydrates_total_g);
@@ -88,57 +82,72 @@ const AgregaAlimentos = () => {
     });
   }
 
+  /*
+  Descripción: función creada para que transforme un string a Pascal Case
+  Input: string
+  Output: string en formato Pascal Case
+  */
+  const toPascalCase = (str) => {
+    return str.replace(/\w\S*/g, m => {return m.charAt(0).toUpperCase() + m.substr(1).toLowerCase()});
+  }
+  
+//<Text>{datos[0].calories}</Text>
+//<Text>{toPascalCase("name")}</Text>
 
   return (
     <View style={styles.containerPage}>
-      <View style={styles.container1}>
-        <View>
-          <Text style={styles.text}>Alimento: </Text>
-          <Input
-            placeholder='Introduce el alimento'
-            onChangeText={setAlimentoBuscado}
-          />
-          <Text>Prueba desde pc nuevo</Text>
-          <Text>{alimentoBuscado}</Text>
-          <Text>{calories}</Text>
-          <Text>{carbohiratosTotalG}</Text>
-          <Text>{colesterolMg}</Text>
-          <Text>{grasasSaturadasG}</Text>
-          <Text>{grasasTotalG}</Text>
-          <Text>{fibraG}</Text>
-          <Text>{nombre}</Text>
-          <Text>{potasioMg}</Text>
-          <Text>{proteinaG}</Text>
-          <Text>{cantidadG}</Text>
-          <Text>{sodioMg}</Text>
-          <Text>{azucarG}</Text>
+      <KeyboardAwareScrollView
+        style={{ flex: 1, width: '100%' }}
+        keyboardShouldPersistTaps="always">
+        
+        <View style={styles.container1}>
+          <View>
+            <Text style={styles.text}>Alimentos: </Text>
+            <Input
+              placeholder='Introduce los alimentos'
+              onChangeText={setAlimentoBuscado}
+            />
+            <View>
+              <Button
+                title='Consultar Alimento'
+                raised={true}
+                onPress={getDatos}
+              />
+            </View>
+            {(arrayAlimentos[0].name !== '') ? (
+              <View>
+                <View>
+                  <Text>Alimentos encontrados</Text>
+                </View>
+                {arrayAlimentos.map((objetoAlimento)=> {
+                  return(
+                    <View>
+                      <View>
+                        <Text>{toPascalCase(objetoAlimento.name)}</Text>
+                      </View>
+                      <View>
+                        <Text style={styles.text}>Cantidad: </Text>
+                        <Input
+                          placeholder='Introduce el peso en gramos del alimento'
+                          keyboardType='decimal-pad'
+                          onChangeText={this.guardaPeso}
+                        />
+                      </View>
+                      <View style={styles.containerButton}>
+                        <Button
+                          title='Agregar'
+                          raised={true}
+                          onPress={this.calculaIMC}
+                        />
+                      </View>
+                    </View>
+                  )
+                })}
+
+              </View>) : null}
+          </View>
         </View>
-        <View>
-          <Button
-            title='Consultar Alimento'
-            raised={true}
-            onPress={getDatos}
-          />
-        </View>
-        <View>
-          <Text style={styles.text}>Cantidad: </Text>
-          <Input
-            placeholder='Introduce el peso en gramos del alimento'
-            keyboardType='decimal-pad'
-            onChangeText={this.guardaPeso}
-          />
-        </View>
-      </View>
-      <View style={styles.containerButton}>
-        <Button
-          title='Agregar'
-          raised={true}
-          onPress={this.calculaIMC}
-        />
-      </View>
-      <View style={styles.layout}>
-    
-      </View>
+      </KeyboardAwareScrollView>
     </View>
   )
 }
@@ -171,6 +180,41 @@ const styles = StyleSheet.create({
 });
 
 export default AgregaAlimentos;
+
+/*
+
+            <Text>{alimentoBuscado}</Text>
+            <Text>{calories}</Text>
+            <Text>{carbohiratosTotalG}</Text>
+            <Text>{colesterolMg}</Text>
+            <Text>{grasasSaturadasG}</Text>
+            <Text>{grasasTotalG}</Text>
+            <Text>{fibraG}</Text>
+            <Text>{nombre}</Text>
+            <Text>{potasioMg}</Text>
+            <Text>{proteinaG}</Text>
+            <Text>{cantidadG}</Text>
+            <Text>{sodioMg}</Text>
+            <Text>{azucarG}</Text>
+<View>
+  <Text style={styles.text}>Cantidad: </Text>
+  <Input
+    placeholder='Introduce el peso en gramos del alimento'
+    keyboardType='decimal-pad'
+    onChangeText={this.guardaPeso}
+  />
+</View>
+            <View style={styles.containerButton}>
+              <Button
+                title='Agregar'
+                raised={true}
+                onPress={this.calculaIMC}
+              />
+            </View>
+<View style={styles.layout}>
+
+</View>
+*/
 
 /*import * as React from 'react';
 import { useEffect, useState } from 'react';

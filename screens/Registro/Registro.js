@@ -9,7 +9,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 
 export default function RegistrationScreen({navigation}) {
-    const [isSignedIn, setIsSignedIn] = useState(false);
+    //const [isSignedIn, setIsSignedIn] = useState(false);
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -33,7 +33,7 @@ export default function RegistrationScreen({navigation}) {
         if (email == '') {
             alert("Requiere de un email.");
             return;
-        } else if(!email.includes('@') || !email.split('@')[1].includes('.')){
+        } else if(email.split(' ').length > 1 || !email.includes('@') || !email.split('@')[1].includes('.')){
             alert("Introduzca un email válido.");
             return;
         }
@@ -52,20 +52,21 @@ export default function RegistrationScreen({navigation}) {
     const onRegisterPress = () => { //cambiar nombre a alPulsarRegistro
         
         compruebaCampos();
+        
         if (!camposValidos) {
             return
         }
 
         /*Llamamos a la API Auth y createUserWithEmailAndPassword de Firebase (línea 25), que 
         crea una nueva cuenta que aparecerá en Firebase Console -> Tabla de autenticación.*/
-        
         createUserWithEmailAndPassword(authentication, email, password)
         .then((response) => {
             console.log(response);
             alert(`Se ha registrado correctamente.\nDatos de la cuenta:\n\n* Nombre: ${fullName}\n\n* E-mail: ${email}`);
-            setIsSignedIn(true);
+            //setIsSignedIn(true);
         })
         .catch((error) => {
+            //alert(`E-mail inválido. Pruebe con otro.`);
             console.log(error);
         })
         /*

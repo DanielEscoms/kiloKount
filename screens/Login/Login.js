@@ -8,7 +8,7 @@ import { authentication } from '../../database/Firebase';
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
 export default function LoginScreen({navigation}) {
-    const [isSignedIn, setIsSignedIn] = useState(false);
+    //const [isSignedIn, setIsSignedIn] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -21,10 +21,11 @@ export default function LoginScreen({navigation}) {
         signInWithEmailAndPassword(authentication, email, password)
         .then((response) => {
             console.log(response);
-            alert(`Se ha registrado correctamente.\nDatos de la cuenta:\n\n* Nombre: ${fullName}\n\n* E-mail: ${email}`);
-            setIsSignedIn(true);
+            //alert(`Se ha registrado correctamente.\nDatos de la cuenta:\n\n* Nombre: ${fullName}\n\n* E-mail: ${email}`);
+            //setIsSignedIn(true);
         })
         .catch((error) => {
+            alert(`Usuario no registrado.\n\nCompruebe que ha escrito su E-mail y contraseña correctamente.`);
             console.log(error);
         })
         
@@ -55,17 +56,17 @@ export default function LoginScreen({navigation}) {
         })*/
     }
 
-    const onLogoutPress = () => {
+    /*const onLogoutPress = () => {
         
         signOut(authentication)
         .then((response) => {
             console.log(response);
-            setIsSignedIn(false);
+            //setIsSignedIn(false);
         })
         .catch((error) => {
             console.log(error);
         })
-    }
+    }*/
 
     return (
         <View style={styles.container}>
@@ -92,7 +93,20 @@ export default function LoginScreen({navigation}) {
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
                 />
-                {isSignedIn === true?
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => onLoginPress()}>
+                    <Text style={styles.buttonTitle}>Iniciar sesión</Text>
+                </TouchableOpacity>
+                <View style={styles.footerView}>
+                    <Text style={styles.footerText}>¿No tienes una cuenta? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Regístrate</Text></Text>
+                </View>
+            </KeyboardAwareScrollView>
+        </View>
+    )
+}
+/*
+{isSignedIn === true?
                     <TouchableOpacity
                         style={styles.button}
                         onPress={() => onLogoutPress()}>
@@ -104,15 +118,7 @@ export default function LoginScreen({navigation}) {
                         onPress={() => onLoginPress()}>
                         <Text style={styles.buttonTitle}>Iniciar sesión</Text>
                     </TouchableOpacity>
-
-                }
-                <View style={styles.footerView}>
+<View style={styles.footerView}>
                     <Text style={styles.footerText}>¿Logueado en este momento? {isSignedIn?"Si":"No"}</Text>
                 </View>
-                <View style={styles.footerView}>
-                    <Text style={styles.footerText}>¿No tienes una cuenta? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Regístrate</Text></Text>
-                </View>
-            </KeyboardAwareScrollView>
-        </View>
-    )
-}
+                }*/

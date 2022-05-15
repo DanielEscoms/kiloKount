@@ -6,6 +6,9 @@ export default StyleSheet.create({
         flex: 1,
         alignItems: 'center'
     },
+    title: {
+
+    },
     input: {
         height: 48,
         borderRadius: 5,

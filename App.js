@@ -17,7 +17,7 @@ const Stack = createStackNavigator();
 
 export default function App() {
 
-  const [loading, setLoading] = useState(true)
+  //const [loading, setLoading] = useState(true)
   const [globalUser, setGlobalUser] = useState(null)
 
   /*Se cambia el usuario global en caso de que se inicie sesión, ya que lo recibe como parámetro y se setea el valor
@@ -36,7 +36,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         { globalUser ? (
-          <Stack.Screen name="Home">
+          <Stack.Screen name="Home" options={{headerShown: false}}>
             {props => <Home {...props} extraData={globalUser} />}
           </Stack.Screen>
         ) : (
