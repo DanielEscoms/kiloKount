@@ -3,9 +3,14 @@ import React, { useState } from 'react'
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import styles from './styles';
-import firebase from '../../database/Firebase';
-import { authentication } from '../../database/Firebase';
+
+import firebaseApp from '../../database/Firebase';
+import { getAuth } from 'firebase/auth';
+
+//import { authentication } from '../../database/Firebase';
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+
+const authentication = getAuth(firebaseApp);
 
 export default function LoginScreen({navigation}) {
     //const [isSignedIn, setIsSignedIn] = useState(false);

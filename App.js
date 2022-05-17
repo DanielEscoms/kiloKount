@@ -6,13 +6,15 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { Login, Home, Registro } from './screens'
 
-import { authentication } from './database/Firebase';
+import firebaseApp from './database/Firebase';
+import { getAuth } from 'firebase/auth';
 import { onAuthStateChanged } from 'firebase/auth';
 
 import {decode, encode} from 'base-64'
 if (!global.btoa) {  global.btoa = encode }
 if (!global.atob) { global.atob = decode }
 
+const authentication = getAuth(firebaseApp);
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -26,6 +28,7 @@ export default function App() {
     if(usuarioFirebase) {
       //código en caso de que la sesión esté iniciada
       setGlobalUser(usuarioFirebase);
+      //console.log(globalUser.providerData);
     } else {
       //código en caso de que la sesión no esté iniciada (o se cierre sesión)
       setGlobalUser(null);
@@ -37,7 +40,7 @@ export default function App() {
       <Stack.Navigator>
         { globalUser ? (
           <Stack.Screen name="Home" options={{headerShown: false}}>
-            {props => <Home {...props} extraData={globalUser} />}
+            {props => <Home userEmail={globalUser.email} {...props} extraData={globalUser} />}
           </Stack.Screen>
         ) : (
           <>
@@ -49,3 +52,10 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+
+//<Stack.Screen name="Home" options={{headerShown: false}} component={Home}/>
+
+/*<Stack.Screen name="Home" options={{headerShown: false}}>
+{props => <Home userEmail={globalUser.email} {...props} extraData={globalUser} />}
+</Stack.Screen>*/

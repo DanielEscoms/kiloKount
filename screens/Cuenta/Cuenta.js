@@ -3,6 +3,9 @@ import * as React from 'react';
 import { Image, Text, TextInput, TouchableOpacity, View, StyleSheet } from 'react-native'
 import styles from './styles';
 
+import { authentication } from '../../database/Firebase';
+import { signOut } from 'firebase/auth';
+
 export default function Cuenta(){
   return(
     <View>
