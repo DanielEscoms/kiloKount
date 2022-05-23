@@ -10,12 +10,15 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Button, Input } from 'react-native-elements';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import moment from 'moment';
+import { RANDOM_FACTOR } from '@firebase/util';
 
 const AgregaAlimentos = () => {
   //llamadas axios a API
   const [alimentoBuscado, setAlimentoBuscado] = useState("");
   const [arrayAlimentos, setArrayAlimentos] = useState([{"calories": 0, "carbohydrates_total_g": 0, "cholesterol_mg": 0, "fat_saturated_g": 0, "fat_total_g": 0, "fiber_g": 0, "name": "", "potassium_mg": 0, "protein_g": 0, "serving_size_g": 0, "sodium_mg": 0, "sugar_g": 0}]);
-  const [pesoIntroducido, setPesoIntroducido] = useState(0);
+  const [alimentoAgregado, setAlimentoAgregado] = useState({"date": "", "uid": 0, "calories": 0, "carbohydrates_total_g": 0, "cholesterol_mg": 0, "fat_saturated_g": 0, "fat_total_g": 0, "fiber_g": 0, "name": "", "potassium_mg": 0, "protein_g": 0, "serving_size_g": 0, "sodium_mg": 0, "sugar_g": 0});
+  const [pesoIntroducido, setPesoIntroducido] = useState("");
   const [calories, setCalories] = useState("");
   const [carbohiratosTotalG, setCarbohidratosTotalG] = useState("");
   const [colesterolMg, setColesterolMg] = useState("");
@@ -28,8 +31,12 @@ const AgregaAlimentos = () => {
   const [cantidadG, setCantidadG] = useState("");
   const [sodioMg, setSodioMg] = useState("");
   const [azucarG, setAzucarG] = useState("");
+  const [fecha, setFecha] = useState('');
   
-  //useEffect(() =>{ },[datos]);
+  useEffect(()=> {
+    let fechaHoy = moment().format('DD/MM/yyyy');
+    setFecha(fechaHoy);
+  }, [])
   
   
   const options = { 
@@ -55,29 +62,29 @@ const AgregaAlimentos = () => {
     console.log(arrayAlimentos);
 
     setCalories(response.data.items[0].calories);
-    console.log(response.data.items[0].calories);
+    //console.log(response.data.items[0].calories);
     setCarbohidratosTotalG(response.data.items[0].carbohydrates_total_g);
-    console.log(response.data.items[0].carbohydrates_total_g);
+    //console.log(response.data.items[0].carbohydrates_total_g);
     setColesterolMg(response.data.items[0].cholesterol_mg);
-    console.log(response.data.items[0].cholesterol_mg);
+    //console.log(response.data.items[0].cholesterol_mg);
     setGrasasSaturadasG(response.data.items[0].fat_saturated_g);
-    console.log(response.data.items[0].fat_saturated_g);
+    //console.log(response.data.items[0].fat_saturated_g);
     setGrasasTotalG(response.data.items[0].fat_total_g);
-    console.log(response.data.items[0].fat_total_g);
+    //console.log(response.data.items[0].fat_total_g);
     setFibraG(response.data.items[0].fiber_g);
-    console.log(response.data.items[0].fiber_g);
+    //console.log(response.data.items[0].fiber_g);
     setNombre(response.data.items[0].name);
-    console.log(response.data.items[0].name);
+    //console.log(response.data.items[0].name);
     setPotasioMg(response.data.items[0].potassium_mg);
-    console.log(response.data.items[0].potassium_mg);
+    //console.log(response.data.items[0].potassium_mg);
     setProteinaG(response.data.items[0].protein_g);
-    console.log(response.data.items[0].protein_g);
+    //console.log(response.data.items[0].protein_g);
     setCantidadG(response.data.items[0].serving_size_g);
-    console.log(response.data.items[0].serving_size_g);
+    //console.log(response.data.items[0].serving_size_g);
     setSodioMg(response.data.items[0].sodium_mg);
-    console.log(response.data.items[0].sodium_mg);
+    //console.log(response.data.items[0].sodium_mg);
     setAzucarG(response.data.items[0].sugar_g);
-    console.log(response.data.items[0].sugar_g);
+    //console.log(response.data.items[0].sugar_g);
     }).catch(function (error) { 
     console.error(error);
     });
@@ -91,6 +98,45 @@ const AgregaAlimentos = () => {
   const toPascalCase = (str) => {
     return str.replace(/\w\S*/g, m => {return m.charAt(0).toUpperCase() + m.substr(1).toLowerCase()});
   }
+
+  /*function guidGenerator(){
+    let S4 = function(){
+        return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+    };
+    return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+  }*/
+
+  /*const anyadeFechaYPeso = (objetoAlimento) => {
+    
+      let alimentoModificado = {
+        date: fecha,
+        uid: guidGenerator(),
+        calories: objetoAlimento.calories*pesoIntroducido/100,
+        carbohydrates_total_g: objetoAlimento.carbohydrates_total_g*pesoIntroducido/100,
+        cholesterol_mg: objetoAlimento.cholesterol_mg*pesoIntroducido/100,
+        fat_saturated_g: objetoAlimento.fat_saturated_g*pesoIntroducido/100,
+        fat_total_g: objetoAlimento.fat_total_g*pesoIntroducido/100,
+        fiber_g: objetoAlimento.fiber_g*pesoIntroducido/100,
+        name: objetoAlimento.name,
+        potassium_mg: objetoAlimento.potassium_mg*pesoIntroducido/100,
+        protein_g: objetoAlimento.protein_g*pesoIntroducido/100,
+        serving_size_g: pesoIntroducido,
+        sodium_mg: objetoAlimento.sodium_mg*pesoIntroducido/100,
+        sugar_g: objetoAlimento.sugar_g*pesoIntroducido/100
+      };
+      setAlimentoAgregado(alimentoModificado);
+      console.log(alimentoAgregado);
+    
+  }
+
+  const agregarAlimento = (objetoAlimento) => {
+    if (pesoIntroducido>0) {
+      anyadeFechaYPeso(objetoAlimento);
+
+      
+      //funciones por definir, continuar por aquí.
+    } else return
+  }*/
   
 //<Text>{datos[0].calories}</Text>
 //<Text>{toPascalCase("name")}</Text>
@@ -138,7 +184,7 @@ const AgregaAlimentos = () => {
                         <Button
                           title='Agregar'
                           raised={true}
-                          onPress={this.calculaIMC}
+                          
                         />
                       </View>
                     </View>
@@ -152,7 +198,7 @@ const AgregaAlimentos = () => {
     </View>
   )
 }
-
+//onPress={agregarAlimento(objetoAlimento)}
 const styles = StyleSheet.create({
   containerPage:{
     backgroundColor: '#7CFF14',
