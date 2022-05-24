@@ -40,7 +40,7 @@ export default function App() {
       <Stack.Navigator>
         { globalUser ? (
           <Stack.Screen name="Home" options={{headerShown: false}}>
-            {props => <Home userEmail={globalUser.email} {...props} extraData={globalUser} />}
+            {props => <Home {...props} globalUser={globalUser} userEmail={globalUser.email}/>}
           </Stack.Screen>
         ) : (
           <>

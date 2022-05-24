@@ -12,12 +12,23 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import moment from 'moment';
 import { RANDOM_FACTOR } from '@firebase/util';
+import uuid from 'react-native-uuid';
 
-const AgregaAlimentos = () => {
+import firebaseApp from '../../database/Firebase';
+import { getFirestore, initializeFirestore, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+
+const firestore = initializeFirestore(firebaseApp, {
+  experimentalForceLongPolling: true,
+});
+
+
+
+const AgregaAlimentos = (props) => {
   //llamadas axios a API
   const [alimentoBuscado, setAlimentoBuscado] = useState("");
-  const [arrayAlimentos, setArrayAlimentos] = useState([{"calories": 0, "carbohydrates_total_g": 0, "cholesterol_mg": 0, "fat_saturated_g": 0, "fat_total_g": 0, "fiber_g": 0, "name": "", "potassium_mg": 0, "protein_g": 0, "serving_size_g": 0, "sodium_mg": 0, "sugar_g": 0}]);
-  const [alimentoAgregado, setAlimentoAgregado] = useState({"date": "", "uid": 0, "calories": 0, "carbohydrates_total_g": 0, "cholesterol_mg": 0, "fat_saturated_g": 0, "fat_total_g": 0, "fiber_g": 0, "name": "", "potassium_mg": 0, "protein_g": 0, "serving_size_g": 0, "sodium_mg": 0, "sugar_g": 0});
+  const [arrayAlimento, setArrayAlimento] = useState([{"calories": 0, "carbohydrates_total_g": 0, "cholesterol_mg": 0, "fat_saturated_g": 0, "fat_total_g": 0, "fiber_g": 0, "name": "", "potassium_mg": 0, "protein_g": 0, "serving_size_g": 0, "sodium_mg": 0, "sugar_g": 0}]);
+  const [arrayAlimentos, setArrayAlimentos] = useState();
+  const [alimentoAgregado, setAlimentoAgregado] = useState([]);
   const [pesoIntroducido, setPesoIntroducido] = useState("");
   const [calories, setCalories] = useState("");
   const [carbohiratosTotalG, setCarbohidratosTotalG] = useState("");
@@ -36,6 +47,8 @@ const AgregaAlimentos = () => {
   useEffect(()=> {
     let fechaHoy = moment().format('DD/MM/yyyy');
     setFecha(fechaHoy);
+    console.log(props.correoUsuario);
+    console.log(props.arrayAlimentos);
   }, [])
   
   
@@ -49,17 +62,20 @@ const AgregaAlimentos = () => {
     if (alimentoBuscado == '') {
       alert("Requiere un nombre de alimento.");
       return;
+    } else if (alimentoBuscado.split(' ').length > 1) {
+      alert("Solamente se acepta un alimento.");
+      return;
     }
 
     axios.request(options).then(function (response) {
-    console.log(response.data);
+    //console.log(response.data);
     
     if (response.data.items.length === 0) {
       alert("El alimento buscado no es válido, por favor, pruebe con otro.");
       return;
     }
-    setArrayAlimentos(response.data.items);
-    console.log(arrayAlimentos);
+    setArrayAlimento(response.data.items);
+    console.log(arrayAlimento);
 
     setCalories(response.data.items[0].calories);
     //console.log(response.data.items[0].calories);
@@ -106,36 +122,73 @@ const AgregaAlimentos = () => {
     return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
   }*/
 
-  /*const anyadeFechaYPeso = (objetoAlimento) => {
+  const anyadeFechaYPeso = () => {
     
       let alimentoModificado = {
         date: fecha,
-        uid: guidGenerator(),
-        calories: objetoAlimento.calories*pesoIntroducido/100,
-        carbohydrates_total_g: objetoAlimento.carbohydrates_total_g*pesoIntroducido/100,
-        cholesterol_mg: objetoAlimento.cholesterol_mg*pesoIntroducido/100,
-        fat_saturated_g: objetoAlimento.fat_saturated_g*pesoIntroducido/100,
-        fat_total_g: objetoAlimento.fat_total_g*pesoIntroducido/100,
-        fiber_g: objetoAlimento.fiber_g*pesoIntroducido/100,
-        name: objetoAlimento.name,
-        potassium_mg: objetoAlimento.potassium_mg*pesoIntroducido/100,
-        protein_g: objetoAlimento.protein_g*pesoIntroducido/100,
+        uid: uuid.v4(),
+        calories: arrayAlimento[0].calories*pesoIntroducido/100,
+        carbohydrates_total_g: arrayAlimento[0].carbohydrates_total_g*pesoIntroducido/100,
+        cholesterol_mg: arrayAlimento[0].cholesterol_mg*pesoIntroducido/100,
+        fat_saturated_g: arrayAlimento[0].fat_saturated_g*pesoIntroducido/100,
+        fat_total_g: arrayAlimento[0].fat_total_g*pesoIntroducido/100,
+        fiber_g: arrayAlimento[0].fiber_g*pesoIntroducido/100,
+        name: arrayAlimento[0].name,
+        potassium_mg: arrayAlimento[0].potassium_mg*pesoIntroducido/100,
+        protein_g: arrayAlimento[0].protein_g*pesoIntroducido/100,
         serving_size_g: pesoIntroducido,
-        sodium_mg: objetoAlimento.sodium_mg*pesoIntroducido/100,
-        sugar_g: objetoAlimento.sugar_g*pesoIntroducido/100
+        sodium_mg: arrayAlimento[0].sodium_mg*pesoIntroducido/100,
+        sugar_g: arrayAlimento[0].sugar_g*pesoIntroducido/100
       };
-      setAlimentoAgregado(alimentoModificado);
-      console.log(alimentoAgregado);
+      //setAlimentoAgregado(alimentoModificado); sale error por bucle infinito
+      //console.log(alimentoAgregado);
+      //console.log(alimentoModificado);
+      return alimentoModificado;
+      
     
   }
+  
+    function agregarAlimento(e){
+      e.preventDefault();
+      console.log(pesoIntroducido);
+      if (pesoIntroducido>0) {
+        let alimentoAAgregar = anyadeFechaYPeso();
+        console.log(alimentoAAgregar);
 
-  const agregarAlimento = (objetoAlimento) => {
+        console.log(props.correoUsuario);
+        console.log(props.arrayAlimentos);
+
+        /*console.log(props.arrayProps);
+        console.log(props.arrayProps.setArrayAlimentos);
+        console.log(props.arrayProps.correoUsuario);
+        console.log(props.arrayProps.arrayAlimentos);*/
+        
+        //A partir de aquí he realizado la prueba
+
+        //funciones por definir, continuar por aquí.
+        
+        const nuevoArrayAlimentos = [...props.arrayAlimentos, alimentoAAgregar]
+
+        console.log(nuevoArrayAlimentos);
+        //actualizar base de datos
+        const docReference = doc(firestore, `usuarios/${props.correoUsuario}`);
+        updateDoc(docReference, {alimentos: [...nuevoArrayAlimentos] })
+
+        //actualizar estado
+        setArrayAlimentos(nuevoArrayAlimentos);
+
+      } else {
+        alert("Añade un peso en gramos válido.");
+        return;
+      }
+    }
+  
+    /*const agregarAlimento = (objetoAlimento) => {
     if (pesoIntroducido>0) {
-      anyadeFechaYPeso(objetoAlimento);
-
-      
+      let alimentoAAgregar = anyadeFechaYPeso(objetoAlimento);
+      console.log(alimentoAAgregar);
       //funciones por definir, continuar por aquí.
-    } else return
+    } else return;
   }*/
   
 //<Text>{datos[0].calories}</Text>
@@ -151,7 +204,7 @@ const AgregaAlimentos = () => {
           <View>
             <Text style={styles.text}>Alimentos: </Text>
             <Input
-              placeholder='Introduce los alimentos'
+              placeholder='Introduce el alimento'
               onChangeText={setAlimentoBuscado}
             />
             <View>
@@ -161,12 +214,12 @@ const AgregaAlimentos = () => {
                 onPress={getDatos}
               />
             </View>
-            {(arrayAlimentos[0].name !== '') ? (
+            {(arrayAlimento[0].name !== '') ? (
               <View>
                 <View>
                   <Text>Alimentos encontrados</Text>
                 </View>
-                {arrayAlimentos.map((objetoAlimento)=> {
+                {arrayAlimento.map((objetoAlimento)=> {
                   return(
                     <View>
                       <View>
@@ -184,11 +237,11 @@ const AgregaAlimentos = () => {
                         <Button
                           title='Agregar'
                           raised={true}
-                          
+                          onPress={agregarAlimento}
                         />
                       </View>
                     </View>
-                  )
+                )
                 })}
 
               </View>) : null}
@@ -198,7 +251,7 @@ const AgregaAlimentos = () => {
     </View>
   )
 }
-//onPress={agregarAlimento(objetoAlimento)}
+//
 const styles = StyleSheet.create({
   containerPage:{
     backgroundColor: '#7CFF14',
@@ -310,3 +363,29 @@ const styles = StyleSheet.create({
 
 export default Pantalla3;
 */
+
+/*
+{arrayAlimento.map((objetoAlimento)=> {
+  return(
+    <View>
+      <View>
+        <Text>{toPascalCase(objetoAlimento.name)}</Text>
+      </View>
+      <View>
+        <Text style={styles.text}>Cantidad: </Text>
+        <Input
+          placeholder='Introduce el peso en gramos del alimento'
+          keyboardType='decimal-pad'
+          onChangeText={setPesoIntroducido}
+        />
+      </View>
+      <View style={styles.containerButton}>
+        <Button
+          title='Agregar'
+          raised={true}
+          onClick={agregarAlimento(objetoAlimento)}
+        />
+      </View>
+    </View>
+  )
+})}*/

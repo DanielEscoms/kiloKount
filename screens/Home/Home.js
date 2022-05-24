@@ -28,14 +28,14 @@ const firestore = initializeFirestore(firebaseApp, {
 
 export default function HomeScreen(props) {
   const Drawer = createDrawerNavigator();
-  //  console.log(props.extraData.email);
+  //console.log(props.globalUser.email);
 
   const [arrayAlimentos, setArrayAlimentos] = useState(null);
  
-  const fakeData = [
-    {"calories": 0, "carbohydrates_total_g": 0, "cholesterol_mg": 0, "fat_saturated_g": 0, "fat_total_g": 0, "fiber_g": 0, "name": "", "potassium_mg": 0, "protein_g": 0, "serving_size_g": 0, "sodium_mg": 0, "sugar_g": 0}
-  ];
- 
+  const fakeData = [{"calories": 0, "carbohydrates_total_g": 0, "cholesterol_mg": 0, "date": " ", "fat_saturated_g": 0, "fat_total_g": 0, "fiber_g": 0, "name": " ", "potassium_mg": 0, "protein_g": 0, "serving_size_g": " ", "sodium_mg": 0, "sugar_g": 0, "uid": "1"}];
+  
+  //const [arrayProps, setArrayProps] = useState(null);
+  const [correoUsuario, setCorreoUsuario] = useState(props.globalUser.email);
 
   async function findDocOrCreateDoc(idDocument){
     //crear una referencia al documento
@@ -62,19 +62,33 @@ export default function HomeScreen(props) {
   */
   useEffect(()=> {
     async function fetchAlimentos(){
-      const alimentosFetchados = await findDocOrCreateDoc(props.extraData.email);
+      const alimentosFetchados = await findDocOrCreateDoc(props.globalUser.email);
       setArrayAlimentos(alimentosFetchados);
+      //console.log(alimentosFetchados);
+      //console.log(arrayAlimentos);
     };
 
     fetchAlimentos();
+
+    //setCorreoUsuario(props.globalUser.email);
+    //console.log(correoUsuario);
+
+
+    /*setArrayProps({
+      setArrayAlimentos: {setArrayAlimentos},
+      correoUsuario: props.userEmail,
+      arrayAlimentos: arrayAlimentos
+    })*/
   }, [])
 
   return (
     <NavigationContainer independent={true}>
       <Drawer.Navigator options="false" initialRouteName="Agrega Alimentos" style={styles.container}>
-        <Drawer.Screen name="Agrega Alimentos" component={AgregaAlimentos}/>
+        <Drawer.Screen name="Agrega Alimentos">
+          {props => <AgregaAlimentos {...props} correoUsuario={correoUsuario} arrayAlimentos={arrayAlimentos} />}
+        </Drawer.Screen>
         <Drawer.Screen name="Recuento kcal">
-            {props => <Recuento {...props} extraData={arrayAlimentos} />}
+            {props => <Recuento {...props} arrayAlimentos={arrayAlimentos} />}
         </Drawer.Screen>
         <Drawer.Screen name="Pagina 2" component={Pagina2}/>
         <Drawer.Screen name="Cuenta" component={Cuenta}/>
@@ -84,5 +98,7 @@ export default function HomeScreen(props) {
 }
 
 
-
+//<Drawer.Screen name="Agrega Alimentos" component={AgregaAlimentos}/>
 //<Drawer.Screen name="Resultados" component={Resultados}/>
+//{props => <AgregaAlimentos {...props} setArrayAlimentos={setArrayAlimentos} correoUsuario={props.userEmail} arrayAlimentos={arrayAlimentos} />}
+//{props => <AgregaAlimentos {...props} arrayProps={arrayProps} />}
