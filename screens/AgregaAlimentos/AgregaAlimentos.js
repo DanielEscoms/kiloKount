@@ -16,6 +16,8 @@ import uuid from 'react-native-uuid';
 
 import firebaseApp from '../../database/Firebase';
 import { getFirestore, initializeFirestore, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+//import { useFocusEffect } from '@react-navigation/native';
+
 
 const firestore = initializeFirestore(firebaseApp, {
   experimentalForceLongPolling: true,
@@ -27,7 +29,7 @@ const AgregaAlimentos = (props) => {
   //llamadas axios a API
   const [alimentoBuscado, setAlimentoBuscado] = useState("");
   const [arrayAlimento, setArrayAlimento] = useState([{"calories": 0, "carbohydrates_total_g": 0, "cholesterol_mg": 0, "fat_saturated_g": 0, "fat_total_g": 0, "fiber_g": 0, "name": "", "potassium_mg": 0, "protein_g": 0, "serving_size_g": 0, "sodium_mg": 0, "sugar_g": 0}]);
-  const [arrayAlimentos, setArrayAlimentos] = useState();
+  const [arrayAlimentos, setArrayAlimentos] = useState([{"calories": 0, "carbohydrates_total_g": 0, "cholesterol_mg": 0, "date": " ", "fat_saturated_g": 0, "fat_total_g": 0, "fiber_g": 0, "name": " ", "potassium_mg": 0, "protein_g": 0, "serving_size_g": " ", "sodium_mg": 0, "sugar_g": 0, "uid": "1"}]);
   const [alimentoAgregado, setAlimentoAgregado] = useState([]);
   const [pesoIntroducido, setPesoIntroducido] = useState("");
   const [calories, setCalories] = useState("");
@@ -42,14 +44,15 @@ const AgregaAlimentos = (props) => {
   const [cantidadG, setCantidadG] = useState("");
   const [sodioMg, setSodioMg] = useState("");
   const [azucarG, setAzucarG] = useState("");
-  const [fecha, setFecha] = useState('');
+  const [fecha, setFecha] = useState(moment().format('DD/MM/yyyy'));
   
   useEffect(()=> {
-    let fechaHoy = moment().format('DD/MM/yyyy');
-    setFecha(fechaHoy);
-    console.log(props.correoUsuario);
-    console.log(props.arrayAlimentos);
-  }, [])
+    //let fechaHoy = moment().format('DD/MM/yyyy');
+    //setFecha(fechaHoy);
+    setArrayAlimentos(props.arrayAlimentos);
+    //console.log(props.correoUsuario);
+    //console.log(props.arrayAlimentos);
+  }, [props.arrayAlimentos])
   
   
   const options = { 
@@ -75,7 +78,7 @@ const AgregaAlimentos = (props) => {
       return;
     }
     setArrayAlimento(response.data.items);
-    console.log(arrayAlimento);
+    //console.log(arrayAlimento);
 
     setCalories(response.data.items[0].calories);
     //console.log(response.data.items[0].calories);
@@ -150,13 +153,14 @@ const AgregaAlimentos = (props) => {
   
     function agregarAlimento(e){
       e.preventDefault();
-      console.log(pesoIntroducido);
+      //console.log(pesoIntroducido);
       if (pesoIntroducido>0) {
         let alimentoAAgregar = anyadeFechaYPeso();
-        console.log(alimentoAAgregar);
-
-        console.log(props.correoUsuario);
-        console.log(props.arrayAlimentos);
+        //setArrayAlimentos(props.arrayAlimentos);
+        //console.log(alimentoAAgregar);
+        //console.log(arrayAlimentos);
+        //console.log(props.correoUsuario);
+        //console.log(props.arrayAlimentos);
 
         /*console.log(props.arrayProps);
         console.log(props.arrayProps.setArrayAlimentos);
@@ -167,7 +171,7 @@ const AgregaAlimentos = (props) => {
 
         //funciones por definir, continuar por aquí.
         
-        const nuevoArrayAlimentos = [...props.arrayAlimentos, alimentoAAgregar]
+        const nuevoArrayAlimentos = [...arrayAlimentos, alimentoAAgregar]
 
         console.log(nuevoArrayAlimentos);
         //actualizar base de datos
@@ -176,7 +180,9 @@ const AgregaAlimentos = (props) => {
 
         //actualizar estado
         setArrayAlimentos(nuevoArrayAlimentos);
-
+        //setArrayAlimento([{"calories": 0, "carbohydrates_total_g": 0, "cholesterol_mg": 0, "fat_saturated_g": 0, "fat_total_g": 0, "fiber_g": 0, "name": "", "potassium_mg": 0, "protein_g": 0, "serving_size_g": 0, "sodium_mg": 0, "sugar_g": 0}]);
+        //limpiar valor a buscar
+        setAlimentoBuscado("");
       } else {
         alert("Añade un peso en gramos válido.");
         return;
@@ -204,6 +210,7 @@ const AgregaAlimentos = (props) => {
           <View>
             <Text style={styles.text}>Alimentos: </Text>
             <Input
+              value={alimentoBuscado}
               placeholder='Introduce el alimento'
               onChangeText={setAlimentoBuscado}
             />

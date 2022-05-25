@@ -13,6 +13,7 @@ import firebaseApp from '../../database/Firebase';
 import { getFirestore, initializeFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 import { Consumer } from 'react-native-paper/lib/typescript/core/settings';
 import { async } from '@firebase/util';
+import { useFocusEffect } from '@react-navigation/native';
 
 const authentication = getAuth(firebaseApp);
 //firebaseApp.firestore().settings({ experimentalForceLongPolling: true});
@@ -59,8 +60,8 @@ export default function HomeScreen(props) {
 
   /*
   Al montarse la pantalla se corre el useEffect, nos busca la tareas, las guarda en el estado
-  */
-  useEffect(()=> {
+  */ //()=> {
+  useEffect(() => {
     async function fetchAlimentos(){
       const alimentosFetchados = await findDocOrCreateDoc(props.globalUser.email);
       setArrayAlimentos(alimentosFetchados);
@@ -79,7 +80,31 @@ export default function HomeScreen(props) {
       correoUsuario: props.userEmail,
       arrayAlimentos: arrayAlimentos
     })*/
-  }, [])
+  }, [arrayAlimentos])
+  
+  /*
+  useFocusEffect(
+    React.useCallback(() => {
+    async function fetchAlimentos(){
+      const alimentosFetchados = await findDocOrCreateDoc(props.globalUser.email);
+      setArrayAlimentos(alimentosFetchados);
+      //console.log(alimentosFetchados);
+      //console.log(arrayAlimentos);
+    };
+
+    fetchAlimentos();
+
+    //setCorreoUsuario(props.globalUser.email);
+    //console.log(correoUsuario);
+
+
+    setArrayProps({
+      setArrayAlimentos: {setArrayAlimentos},
+      correoUsuario: props.userEmail,
+      arrayAlimentos: arrayAlimentos
+    })
+  }, [arrayAlimentos])
+  );*/
 
   return (
     <NavigationContainer independent={true}>

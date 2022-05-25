@@ -17,7 +17,7 @@ import moment from 'moment';
 
 const Recuento = (props) => {
   
-  console.log(props.arrayAlimentos);
+  //console.log(props.arrayAlimentos);
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
