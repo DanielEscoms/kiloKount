@@ -37,6 +37,7 @@ export default function HomeScreen(props) {
   
   //const [arrayProps, setArrayProps] = useState(null);
   const [correoUsuario, setCorreoUsuario] = useState(props.globalUser.email);
+  const [boleano, setBoleano] = useState(true);
 
   async function findDocOrCreateDoc(idDocument){
     //crear una referencia al documento
@@ -65,11 +66,15 @@ export default function HomeScreen(props) {
     async function fetchAlimentos(){
       const alimentosFetchados = await findDocOrCreateDoc(props.globalUser.email);
       setArrayAlimentos(alimentosFetchados);
+      setBoleano(false);
       //console.log(alimentosFetchados);
-      //console.log(arrayAlimentos);
+      console.log(arrayAlimentos);
     };
 
-    fetchAlimentos();
+    if(boleano){
+      fetchAlimentos();
+    }
+
 
     //setCorreoUsuario(props.globalUser.email);
     //console.log(correoUsuario);
@@ -116,7 +121,9 @@ export default function HomeScreen(props) {
             {props => <Recuento {...props} arrayAlimentos={arrayAlimentos} />}
         </Drawer.Screen>
         <Drawer.Screen name="Pagina 2" component={Pagina2}/>
-        <Drawer.Screen name="Cuenta" component={Cuenta}/>
+        <Drawer.Screen name="Cuenta">
+            {props => <Cuenta {...props} correoUsuario={correoUsuario} />}
+        </Drawer.Screen>
       </Drawer.Navigator>
     </NavigationContainer>
     )
@@ -127,3 +134,4 @@ export default function HomeScreen(props) {
 //<Drawer.Screen name="Resultados" component={Resultados}/>
 //{props => <AgregaAlimentos {...props} setArrayAlimentos={setArrayAlimentos} correoUsuario={props.userEmail} arrayAlimentos={arrayAlimentos} />}
 //{props => <AgregaAlimentos {...props} arrayProps={arrayProps} />}
+//<Drawer.Screen name="Cuenta" component={Cuenta}/>

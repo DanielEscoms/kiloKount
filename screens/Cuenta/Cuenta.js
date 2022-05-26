@@ -6,23 +6,20 @@ import styles from './styles';
 import { authentication } from '../../database/Firebase';
 import { signOut } from 'firebase/auth';
 
-export default function Cuenta(){
-  return(
+export default function Cuenta(props) {
+  return (
     <View>
-      <Text>Hola mundo desde Cuenta</Text>
-      <Text>Hola mundo desde Cuenta</Text>
-      <Text>Hola mundo desde Cuenta</Text>
-      <Text>Hola mundo desde Cuenta</Text>
-      <Text>Hola mundo desde Cuenta</Text>
-      <Text>Hola mundo desde Cuenta</Text>
-      <Text>Hola mundo desde Cuenta</Text>
-      <Text>Hola mundo desde Cuenta</Text>
-      <Text>Hola mundo desde Cuenta</Text>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => signOut(authentication)}>
-        <Text style={styles.buttonTitle}>Cerrar sesión</Text>
-      </TouchableOpacity>
+      <View>
+        <Text>Sesión iniciada desde cuenta:</Text>
+        <Text>{props.correoUsuario}</Text>
+      </View>
+      <View>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => signOut(authentication)}>
+          <Text style={styles.buttonTitle}>Cerrar sesión</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

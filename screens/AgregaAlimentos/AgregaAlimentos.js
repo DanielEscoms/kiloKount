@@ -10,6 +10,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Button, Input } from 'react-native-elements';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import { RANDOM_FACTOR } from '@firebase/util';
 import uuid from 'react-native-uuid';
@@ -45,6 +46,10 @@ const AgregaAlimentos = (props) => {
   const [sodioMg, setSodioMg] = useState("");
   const [azucarG, setAzucarG] = useState("");
   const [fecha, setFecha] = useState(moment().format('DD/MM/yyyy'));
+  const [date, setDate] = useState(new Date());
+  const [mode, setMode] = useState('date');
+  const [show, setShow] = useState(false);
+
   
   useEffect(()=> {
     //let fechaHoy = moment().format('DD/MM/yyyy');
@@ -54,6 +59,31 @@ const AgregaAlimentos = (props) => {
     //console.log(props.arrayAlimentos);
   }, [props.arrayAlimentos])
   
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === 'ios');
+    setDate(currentDate);
+
+    let tempDate = new Date(currentDate);
+    let mesCifra = tempDate.getMonth() + 1;
+    //console.log(typeof mesCifra);
+    if (mesCifra < 10){
+      mesCifra = '0' + mesCifra.toString();
+    }
+    //console.log(mesCifra);
+    //console.log(typeof mesCifra);
+    let fDate = tempDate.getDate() + '/' + mesCifra + '/' + tempDate.getFullYear();
+    
+    //let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
+    //let fTime = 'Hours: ' + tempDate.getHours() + ' | Minutes: ' + tempDate.getMinutes();
+    
+    setFecha(fDate);
+  }
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  }
   
   const options = { 
     method: 'GET', 
@@ -180,7 +210,7 @@ const AgregaAlimentos = (props) => {
 
         //actualizar estado
         setArrayAlimentos(nuevoArrayAlimentos);
-        //setArrayAlimento([{"calories": 0, "carbohydrates_total_g": 0, "cholesterol_mg": 0, "fat_saturated_g": 0, "fat_total_g": 0, "fiber_g": 0, "name": "", "potassium_mg": 0, "protein_g": 0, "serving_size_g": 0, "sodium_mg": 0, "sugar_g": 0}]);
+        setArrayAlimento([{"calories": 0, "carbohydrates_total_g": 0, "cholesterol_mg": 0, "fat_saturated_g": 0, "fat_total_g": 0, "fiber_g": 0, "name": "", "potassium_mg": 0, "protein_g": 0, "serving_size_g": 0, "sodium_mg": 0, "sugar_g": 0}]);
         //limpiar valor a buscar
         setAlimentoBuscado("");
       } else {
@@ -239,6 +269,23 @@ const AgregaAlimentos = (props) => {
                           keyboardType='decimal-pad'
                           onChangeText={setPesoIntroducido}
                         />
+                      </View>
+                      <View>
+                        <Text>Fecha de consumo del alimento</Text>
+                        <Text>{fecha}</Text>
+                        <Button
+                            title='Modificar fecha'
+                            onPress={() => showMode('date')}
+                          />
+                        
+                        {show && (
+                          <DateTimePicker
+                            testID='dateTimePicker'
+                            value={date}
+                            mode={mode}
+                            display='default'
+                            onChange={onChange}
+                          />)}
                       </View>
                       <View style={styles.containerButton}>
                         <Button
