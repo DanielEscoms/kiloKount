@@ -1,15 +1,11 @@
-/* eslint-disable prettier/prettier */
 import * as React from 'react';
-import { Image, Text, TextInput, TouchableOpacity, View, StyleSheet } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native';
 import styles from './styles';
 
-//import { authentication } from '../../database/Firebase';
-import { signOut } from 'firebase/auth';
 import firebaseApp from '../../database/Firebase';
-import { getAuth } from 'firebase/auth';
+import { getAuth, signOut } from 'firebase/auth';
 
 const authentication = getAuth(firebaseApp);
-
 
 export default function Cuenta(props) {
   return (
@@ -28,5 +24,3 @@ export default function Cuenta(props) {
     </View>
   );
 }
-
-

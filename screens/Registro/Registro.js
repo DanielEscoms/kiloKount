@@ -1,22 +1,14 @@
-/* eslint-disable prettier/prettier */
 import React, { useState } from 'react'
-import { Image, Text, TextInput, TouchableOpacity, View, DevSettings } from 'react-native'
+import { Text, TextInput, TouchableOpacity, View, DevSettings } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import styles from './styles';
 
-
-import { getAuth } from 'firebase/auth';
 import firebaseApp from '../../database/Firebase';
-//import { authentication } from '../../database/Firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-
-
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 
 const authentication = getAuth(firebaseApp);
 
-
-export default function RegistrationScreen({navigation}) {
-    //const [isSignedIn, setIsSignedIn] = useState(false);
+export default function RegistrationScreen({ navigation }) {
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -28,23 +20,23 @@ export default function RegistrationScreen({navigation}) {
     }
 
     const compruebaCampos = () => {
-        
+
         if (fullName == '') {
             alert("Requiere de un nombre de usuario.");
             return;
-        } else if(fullName.split(' ').length < 2){
+        } else if (fullName.split(' ').length < 2) {
             alert("Introduzca apellido.");
             return;
         }
-        
+
         if (email == '') {
             alert("Requiere de un email.");
             return;
-        } else if(email.split(' ').length > 1 || !email.includes('@') || !email.split('@')[1].includes('.')){
+        } else if (email.split(' ').length > 1 || !email.includes('@') || !email.split('@')[1].includes('.')) {
             alert("Introduzca un email válido.");
             return;
         }
-        
+
         if (password.length < 6) {
             alert("La contraseña ha de tener al menos 6 carácteres.");
             return;
@@ -56,10 +48,10 @@ export default function RegistrationScreen({navigation}) {
         setCamposValidos(true);
     }
 
-    const onRegisterPress = () => { //cambiar nombre a alPulsarRegistro
-        
+    const onRegisterPress = () => {
+
         compruebaCampos();
-        
+
         if (!camposValidos) {
             return
         }
@@ -67,60 +59,31 @@ export default function RegistrationScreen({navigation}) {
         /*Llamamos a la API Auth y createUserWithEmailAndPassword de Firebase (línea 25), que 
         crea una nueva cuenta que aparecerá en Firebase Console -> Tabla de autenticación.*/
         createUserWithEmailAndPassword(authentication, email, password)
-        .then((response) => {
-            console.log(response);
-            alert(`Se ha registrado correctamente.\nDatos de la cuenta:\n\n* Nombre: ${fullName}\n\n* E-mail: ${email}`);
-            //setIsSignedIn(true);
-            setTimeout(function(){
-                DevSettings.reload();
-            }, 3000);
-        })
-        .catch((error) => {
-            //alert(`E-mail inválido. Pruebe con otro.`);
-            console.log(error);
-        })
-        /*
-        firebase
-            .auth()
-            .createUserWithEmailAndPassword(email, password)
             .then((response) => {
-                const uid = response.user.uid
-                const data = {
-                    id: uid,
-                    email,
-                    fullName,
-                };
-                /*Si el registro de la cuenta fue exitoso, también almacenamos los datos del 
-                usuario en Firebase Firestore (línea 24). Esto es necesario para almacenar
-                información adicional del usuario, como el nombre completo, la URL de la foto 
-                de perfil, etc., que no se puede almacenar en la tabla de autenticación.
-                const usersRef = firebase.firestore().collection('users')
-                /*Si el registro fue exitoso, navegamos a la pantalla de inicio, 
-                pasando también los datos del objeto de usuario.
-                usersRef
-                    .doc(uid)
-                    .set(data)
-                    .then(() => {
-                        navigation.navigate('Home', {user: data})
-                    })
-                    .catch((error) => {
-                        alert(error)
-                    });
+                console.log(response);
+                alert(`Se ha registrado correctamente.\nDatos de la cuenta:\n\n* Nombre: ${fullName}\n\n* E-mail: ${email}`);
+
+                //Aplico una espera de tiempo y reload para volver a cargar la aplicación una vez se haya generado un almacenamiento 
+                //en la base de datos, de este modo me evito que hayan errores durante la introducción de alimentos.
+                setTimeout(function () {
+                    DevSettings.reload();
+                }, 3000);
             })
             /*Si ocurre algún error, simplemente mostramos una alerta con él. Los 
             errores pueden ser cosas como falta de conexión a la red, contraseña 
-            demasiado corta, correo electrónico no válido, etc.
+            demasiado corta, correo electrónico no válido, etc.*/
             .catch((error) => {
-                alert(error)
-        });*/
+                alert(`No se ha podido realizar el registro.`);
+                console.log(error);
+            })
     }
-    
+
     return (
         <View style={styles.container}>
             <KeyboardAwareScrollView
                 style={{ flex: 1, width: '100%' }}
                 keyboardShouldPersistTaps="always">
-                
+
                 <TextInput
                     style={styles.input}
                     placeholder='Nombre y Apellido(s)'
