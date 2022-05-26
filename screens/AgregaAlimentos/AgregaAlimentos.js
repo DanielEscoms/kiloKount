@@ -5,7 +5,7 @@
 /* eslint-disable semi */
 /* eslint-disable prettier/prettier */
 import * as React from 'react';
-import { Image, Text, StyleSheet, View } from 'react-native';
+import { Image, Text, StyleSheet, View, DevSettings } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Button, Input } from 'react-native-elements';
 import { useEffect, useState } from 'react';
@@ -55,6 +55,7 @@ const AgregaAlimentos = (props) => {
     //let fechaHoy = moment().format('DD/MM/yyyy');
     //setFecha(fechaHoy);
     setArrayAlimentos(props.arrayAlimentos);
+    console.log(arrayAlimentos);
     //console.log(props.correoUsuario);
     //console.log(props.arrayAlimentos);
   }, [props.arrayAlimentos])
@@ -144,9 +145,7 @@ const AgregaAlimentos = (props) => {
   Input: string
   Output: string en formato Pascal Case
   */
-  const toPascalCase = (str) => {
-    return str.replace(/\w\S*/g, m => {return m.charAt(0).toUpperCase() + m.substr(1).toLowerCase()});
-  }
+  
 
   /*function guidGenerator(){
     let S4 = function(){
@@ -181,44 +180,49 @@ const AgregaAlimentos = (props) => {
     
   }
   
-    function agregarAlimento(e){
-      e.preventDefault();
-      //console.log(pesoIntroducido);
-      if (pesoIntroducido>0) {
-        let alimentoAAgregar = anyadeFechaYPeso();
-        //setArrayAlimentos(props.arrayAlimentos);
-        //console.log(alimentoAAgregar);
-        //console.log(arrayAlimentos);
-        //console.log(props.correoUsuario);
-        //console.log(props.arrayAlimentos);
+  function agregarAlimento(e){
+    e.preventDefault();
+    //console.log(pesoIntroducido);
+    if (pesoIntroducido>0) {
+      let alimentoAAgregar = anyadeFechaYPeso();
 
-        /*console.log(props.arrayProps);
-        console.log(props.arrayProps.setArrayAlimentos);
-        console.log(props.arrayProps.correoUsuario);
-        console.log(props.arrayProps.arrayAlimentos);*/
-        
-        //A partir de aquí he realizado la prueba
+      
+      //setArrayAlimentos(props.arrayAlimentos);
+      //console.log(alimentoAAgregar);
+      //console.log(arrayAlimentos);
+      //console.log(props.correoUsuario);
+      //console.log(props.arrayAlimentos);
 
-        //funciones por definir, continuar por aquí.
-        
-        const nuevoArrayAlimentos = [...arrayAlimentos, alimentoAAgregar]
+      /*console.log(props.arrayProps);
+      console.log(props.arrayProps.setArrayAlimentos);
+      console.log(props.arrayProps.correoUsuario);
+      console.log(props.arrayProps.arrayAlimentos);*/
+      
+      //A partir de aquí he realizado la prueba
 
-        console.log(nuevoArrayAlimentos);
-        //actualizar base de datos
-        const docReference = doc(firestore, `usuarios/${props.correoUsuario}`);
-        updateDoc(docReference, {alimentos: [...nuevoArrayAlimentos] })
+      //funciones por definir, continuar por aquí.
+      
+      const nuevoArrayAlimentos = [...arrayAlimentos, alimentoAAgregar]
 
-        //actualizar estado
-        setArrayAlimentos(nuevoArrayAlimentos);
-        setArrayAlimento([{"calories": 0, "carbohydrates_total_g": 0, "cholesterol_mg": 0, "fat_saturated_g": 0, "fat_total_g": 0, "fiber_g": 0, "name": "", "potassium_mg": 0, "protein_g": 0, "serving_size_g": 0, "sodium_mg": 0, "sugar_g": 0}]);
-        //limpiar valor a buscar
-        setAlimentoBuscado("");
-      } else {
-        alert("Añade un peso en gramos válido.");
-        return;
-      }
+      console.log(nuevoArrayAlimentos);
+      //actualizar base de datos
+      const docReference = doc(firestore, `usuarios/${props.correoUsuario}`);
+      updateDoc(docReference, {alimentos: [...nuevoArrayAlimentos] })
+
+      //actualizar estado
+      setArrayAlimentos(nuevoArrayAlimentos);
+      setArrayAlimento([{"calories": 0, "carbohydrates_total_g": 0, "cholesterol_mg": 0, "fat_saturated_g": 0, "fat_total_g": 0, "fiber_g": 0, "name": "", "potassium_mg": 0, "protein_g": 0, "serving_size_g": 0, "sodium_mg": 0, "sugar_g": 0}]);
+      //limpiar valor a buscar
+      setAlimentoBuscado("");
+    } else {
+      alert("Añade un peso en gramos válido.");
+      return;
     }
+  }
   
+  const refrescar = () => {
+    DevSettings.reload();
+  }
     /*const agregarAlimento = (objetoAlimento) => {
     if (pesoIntroducido>0) {
       let alimentoAAgregar = anyadeFechaYPeso(objetoAlimento);
@@ -238,12 +242,14 @@ const AgregaAlimentos = (props) => {
         
         <View style={styles.container1}>
           <View>
-            <Text style={styles.text}>Alimentos: </Text>
-            <Input
-              value={alimentoBuscado}
-              placeholder='Introduce el alimento'
-              onChangeText={setAlimentoBuscado}
-            />
+            <View>
+              <Text style={styles.text}>Agregue alimentos a la base de datos: </Text>
+              <Input
+                value={alimentoBuscado}
+                placeholder='Nombre del alimento en inglés'
+                onChangeText={setAlimentoBuscado}
+              />
+            </View>
             <View>
               <Button
                 title='Consultar Alimento'
@@ -251,54 +257,60 @@ const AgregaAlimentos = (props) => {
                 onPress={getDatos}
               />
             </View>
-            {(arrayAlimento[0].name !== '') ? (
-              <View>
+            <View>
+              {(arrayAlimento[0].name !== '') ? (
                 <View>
-                  <Text>Alimentos encontrados</Text>
-                </View>
-                {arrayAlimento.map((objetoAlimento)=> {
-                  return(
-                    <View>
+                  {arrayAlimento.map((objetoAlimento)=> {
+                    return(
                       <View>
-                        <Text>{toPascalCase(objetoAlimento.name)}</Text>
-                      </View>
-                      <View>
-                        <Text style={styles.text}>Cantidad: </Text>
-                        <Input
-                          placeholder='Introduce el peso en gramos del alimento'
-                          keyboardType='decimal-pad'
-                          onChangeText={setPesoIntroducido}
-                        />
-                      </View>
-                      <View>
-                        <Text>Fecha de consumo del alimento</Text>
-                        <Text>{fecha}</Text>
-                        <Button
-                            title='Modificar fecha'
-                            onPress={() => showMode('date')}
+                        <View>
+                          <Text style={styles.text}>Fecha de consumo del alimento</Text>
+                          <Text style={styles.text}>{fecha}</Text>
+                          <Button
+                              title='Modificar fecha'
+                              onPress={() => showMode('date')}
+                            />
+                          
+                          {show && (
+                            <DateTimePicker
+                              testID='dateTimePicker'
+                              value={date}
+                              mode={mode}
+                              display='default'
+                              onChange={onChange}
+                            />)}
+                        </View>
+                        <View>
+                          <Text style={styles.text}>Cantidad de {objetoAlimento.name} ingerida:</Text>
+                          <Input
+                            placeholder='Introduce el peso en gramos del alimento'
+                            keyboardType='decimal-pad'
+                            onChangeText={setPesoIntroducido}
                           />
-                        
-                        {show && (
-                          <DateTimePicker
-                            testID='dateTimePicker'
-                            value={date}
-                            mode={mode}
-                            display='default'
-                            onChange={onChange}
-                          />)}
+                        </View>
+                        <View style={styles.containerButton}>
+                          <Button
+                            title='Agregar'
+                            raised={true}
+                            onPress={agregarAlimento}
+                          />
+                        </View>
                       </View>
-                      <View style={styles.containerButton}>
-                        <Button
-                          title='Agregar'
-                          raised={true}
-                          onPress={agregarAlimento}
-                        />
-                      </View>
-                    </View>
-                )
-                })}
+                  )
+                  })}
 
-              </View>) : null}
+                </View>) : null}
+            </View>
+            <View>
+            <View>
+              <Text> </Text>
+              <Button
+              title='Ver alimentos agregados'
+              raised={true}
+              onPress={refrescar}
+              />
+            </View>
+            </View>
           </View>
         </View>
       </KeyboardAwareScrollView>
@@ -317,7 +329,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   text:{
-    fontSize: 25,
+    fontSize: 20,
   },
   containerButton:{
     padding: 10,

@@ -5,15 +5,23 @@
 /* eslint-disable semi */
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react'
-import { Image, Text, StyleSheet, View, Platform } from 'react-native';
+import { Image, Text, StyleSheet, View, Platform, DevSettings } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Button, Input } from 'react-native-elements';
 //import { useEffect, useState } from 'react';
 import axios from 'axios';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
+
+import firebaseApp from '../../database/Firebase';
+import { getFirestore, initializeFirestore, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { updateCurrentUser } from 'firebase/auth';
 //import { event } from 'react-native-reanimated';
 //import { Calendar } from 'react-native-calendario';
+
+const firestore = initializeFirestore(firebaseApp, {
+  experimentalForceLongPolling: true,
+});
 
 const Recuento = (props) => {
   
@@ -30,7 +38,7 @@ const Recuento = (props) => {
   useEffect(()=> {
     setArrayAlimentos(props.arrayAlimentos);
     console.log(arrayAlimentos);
-  }, [arrayAlimentos])
+  }, [props.arrayAlimentos])
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -69,6 +77,44 @@ const Recuento = (props) => {
     }
   }
 
+  const toPascalCase = (str) => {
+    return str.replace(/\w\S*/g, m => {return m.charAt(0).toUpperCase() + m.substr(1).toLowerCase()});
+  }
+  
+  async function eliminaAlimento(uidAlimentoAEliminar){
+    //crear nuevo array de tareas
+    const nuevoArrayAlimentos = arrayAlimentos.filter((objetoAlimento) => objetoAlimento.uid !== uidAlimentoAEliminar);
+
+    //actualizar base de datos
+    const docReference = doc(firestore, `usuarios/${props.correoUsuario}`);
+    updateDoc(docReference, { alimentos: [...nuevoArrayAlimentos] });
+    
+    //actualizar state
+    setArrayAlimentos(nuevoArrayAlimentos);
+    
+    console.log("Eliminado"+uidAlimentoAEliminar);
+    return;
+  }
+  /*
+  const eliminaAlimento = (identificador) => {
+    console.log("Eliminado"+identificador);
+    return;
+  }*/
+
+  const calculaTotal = () => {
+    let caloriasTotal = 0;
+    arrayAlimentos.map((alimento)=> {
+      if(fechaInicial <= alimento.date && alimento.date <= fechaFinal || fechaInicial >= alimento.date && alimento.date >= fechaFinal){
+        caloriasTotal = caloriasTotal + alimento.calories;
+      }
+    })
+    setContadorKcal(Math.round(caloriasTotal * 100) / 100);
+  }
+
+  const refrescar = () => {
+    DevSettings.reload();
+  }
+
   const compruebaRangoFechas = (alimento) => {
     //console.log(contadorKcal);
     //setContadorKcal(contadorKcal+alimento.calories);
@@ -86,20 +132,24 @@ const Recuento = (props) => {
           <Text> </Text>
           <View>
             <View>
-              <Text>{alimento.name}</Text>
+              <Text>{toPascalCase(alimento.name)}</Text>
             </View>
             <View>
-              <Text>{alimento.serving_size_g}</Text>
+              <Text>{alimento.serving_size_g} g</Text>
             </View>
           </View>
           <View>
             <View>
-              <Text>{alimento.calories}</Text>
+              <Text>{alimento.calories} kcal</Text>
+            </View>
+            <View>
+              <Text>{alimento.date}</Text>
             </View>
             <View>
               <Button
                 title='Eliminar Alimento'
-                onPress={eliminaAlimento(alimento.uid)}
+                raised={true}
+                onPress={() => eliminaAlimento(alimento.uid)}
               />
             </View>
           </View>
@@ -111,35 +161,25 @@ const Recuento = (props) => {
       console.log(typeof fechaInicial);
       console.log(alimento.date);
       console.log(fechaInicial);*/
-      return
+      return;
     }
 
-  }
-   
-  
-  const eliminaAlimento = (identificador) => {
-  
-  }
-
-  const calculaTotal = () => {
-    let caloriasTotal = 0;
-    arrayAlimentos.map((alimento)=> {
-      if(fechaInicial <= alimento.date && alimento.date <= fechaFinal || fechaInicial >= alimento.date && alimento.date >= fechaFinal){
-        caloriasTotal = caloriasTotal + alimento.calories;
-      }
-    })
-    setContadorKcal(Math.round(caloriasTotal * 100) / 100);
   }
 
   return (
     <View style={styles.containerPage}>
       <View>
         <View>
-          <Text>Alimentos almacenados</Text>
+          <Text>Refresca para actualizar los alimentos</Text>
+          <Button
+          title='Refrescar'
+          raised={true}
+          onPress={refrescar}
+          />
         </View>
         <View>
           <View>
-            <Text>del día</Text>
+            <Text>Alimentos almacenados del día</Text>
             <Text>{fechaInicial}</Text>
             <Button
                 title='Seleccionar fecha'
@@ -171,7 +211,7 @@ const Recuento = (props) => {
         keyboardShouldPersistTaps="always">
         
         <View style={styles.container1}>
-          {(arrayAlimentos.length > 1) ? (
+          {(arrayAlimentos != null) ? (
             <View>
               
               {arrayAlimentos.map((objetoAlimento)=> {
@@ -182,7 +222,7 @@ const Recuento = (props) => {
               })}
 
             </View>
-          ) : <View><Text>No se encuentran alimentos para las fechas selecionadas</Text></View>}
+          ) : <View><Text>Refrescando, espere por favor.</Text></View>}
         </View>
       </KeyboardAwareScrollView>
       <View>
@@ -200,7 +240,7 @@ const Recuento = (props) => {
     </View>
   )
 }
-
+//linea 183     {(arrayAlimentos.length > 1) ? (
 
 const styles = StyleSheet.create({
   containerPage:{

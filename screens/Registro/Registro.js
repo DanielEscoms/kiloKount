@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useState } from 'react'
-import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Image, Text, TextInput, TouchableOpacity, View, DevSettings } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import styles from './styles';
 
@@ -71,6 +71,9 @@ export default function RegistrationScreen({navigation}) {
             console.log(response);
             alert(`Se ha registrado correctamente.\nDatos de la cuenta:\n\n* Nombre: ${fullName}\n\n* E-mail: ${email}`);
             //setIsSignedIn(true);
+            setTimeout(function(){
+                DevSettings.reload();
+            }, 3000);
         })
         .catch((error) => {
             //alert(`E-mail inválido. Pruebe con otro.`);
@@ -161,6 +164,9 @@ export default function RegistrationScreen({navigation}) {
                     onPress={() => onRegisterPress()}>
                     <Text style={styles.buttonTitle}>Crear cuenta</Text>
                 </TouchableOpacity>
+                <View style={styles.footerView}>
+                    <Text style={styles.footerText}>Doble click en "Crear cuenta" para registrarse.</Text>
+                </View>
                 <View style={styles.footerView}>
                     <Text style={styles.footerText}>¿Ya tiene una cuenta? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Inicia sesión</Text></Text>
                 </View>

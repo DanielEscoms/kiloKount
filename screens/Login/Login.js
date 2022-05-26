@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useState } from 'react'
-import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Image, Text, TextInput, TouchableOpacity, View, DevSettings } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import styles from './styles';
 
@@ -26,8 +26,11 @@ export default function LoginScreen({navigation}) {
         signInWithEmailAndPassword(authentication, email, password)
         .then((response) => {
             console.log(response);
-            //alert(`Se ha registrado correctamente.\nDatos de la cuenta:\n\n* Nombre: ${fullName}\n\n* E-mail: ${email}`);
+            alert(`Se ha iniciado sesión correctamente.\n\n* E-mail: ${email}`);
             //setIsSignedIn(true);
+            setTimeout(function(){
+                DevSettings.reload();
+            }, 3000);
         })
         .catch((error) => {
             alert(`Usuario no registrado.\n\nCompruebe que ha escrito su E-mail y contraseña correctamente.`);

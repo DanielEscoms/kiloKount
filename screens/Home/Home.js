@@ -113,12 +113,12 @@ export default function HomeScreen(props) {
 
   return (
     <NavigationContainer independent={true}>
-      <Drawer.Navigator options="false" initialRouteName="Agrega Alimentos" style={styles.container}>
+      <Drawer.Navigator options="false" initialRouteName="Recuento kcal" style={styles.container}>
         <Drawer.Screen name="Agrega Alimentos">
           {props => <AgregaAlimentos {...props} correoUsuario={correoUsuario} arrayAlimentos={arrayAlimentos} />}
         </Drawer.Screen>
         <Drawer.Screen name="Recuento kcal">
-            {props => <Recuento {...props} arrayAlimentos={arrayAlimentos} />}
+            {props => <Recuento {...props} correoUsuario={correoUsuario} arrayAlimentos={arrayAlimentos} />}
         </Drawer.Screen>
         <Drawer.Screen name="Pagina 2" component={Pagina2}/>
         <Drawer.Screen name="Cuenta">
