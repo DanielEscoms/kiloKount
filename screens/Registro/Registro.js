@@ -56,15 +56,15 @@ export default function RegistrationScreen({ navigation }) {
             return
         }
 
-        /*Llamamos a la API Auth y createUserWithEmailAndPassword de Firebase (línea 25), que 
+        /*Llamamos a la API Auth y createUserWithEmailAndPassword de Firebase, que 
         crea una nueva cuenta que aparecerá en Firebase Console -> Tabla de autenticación.*/
         createUserWithEmailAndPassword(authentication, email, password)
             .then((response) => {
                 console.log(response);
                 alert(`Se ha registrado correctamente.\nDatos de la cuenta:\n\n* Nombre: ${fullName}\n\n* E-mail: ${email}`);
 
-                //Aplico una espera de tiempo y reload para volver a cargar la aplicación una vez se haya generado un almacenamiento 
-                //en la base de datos, de este modo me evito que hayan errores durante la introducción de alimentos.
+                /*Aplico una espera de tiempo y reload para volver a cargar la aplicación una vez se haya generado un almacenamiento 
+                en la base de datos, de este modo me evito que hayan errores durante la introducción de alimentos.*/
                 setTimeout(function () {
                     DevSettings.reload();
                 }, 3000);

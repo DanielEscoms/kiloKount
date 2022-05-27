@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import { AgregaAlimentos, Recuento, Pagina2, Cuenta } from '../';
+import { AgregaAlimentos, Recuento, Cuenta } from '../';
 import styles from './styles';
 
 import firebaseApp from '../../database/Firebase';
@@ -20,9 +20,10 @@ export default function HomeScreen(props) {
   const [correoUsuario, setCorreoUsuario] = useState(props.globalUser.email);
   const [boleano, setBoleano] = useState(true);
 
-  async function findDocOrCreateDoc(idDocument) {
+
+  async function findDocOrCreateDoc(userEmail) {
     //crear una referencia al documento
-    const docReference = doc(firestore, `usuarios/${idDocument}`);
+    const docReference = doc(firestore, `usuarios/${userEmail}`);
 
     // buscar documento (query === consulta)
     const query = await getDoc(docReference);
@@ -40,9 +41,7 @@ export default function HomeScreen(props) {
     }
   }
 
-  /*
-  Al montarse la pantalla se corre el useEffect, nos busca la tareas, las guarda en el estado
-  */
+  /* Al montarse la pantalla se corre el useEffect, nos busca la tareas, las guarda en el estado*/
   useEffect(() => {
     async function fetchAlimentos() {
       
@@ -59,13 +58,12 @@ export default function HomeScreen(props) {
   return (
     <NavigationContainer independent={true}>
       <Drawer.Navigator options="false" initialRouteName="Recuento kcal" style={styles.container}>
-        <Drawer.Screen name="Agrega Alimentos">
-          {props => <AgregaAlimentos {...props} correoUsuario={correoUsuario} arrayAlimentos={arrayAlimentos} />}
-        </Drawer.Screen>
         <Drawer.Screen name="Recuento kcal">
           {props => <Recuento {...props} correoUsuario={correoUsuario} arrayAlimentos={arrayAlimentos} />}
         </Drawer.Screen>
-        <Drawer.Screen name="Pagina 2" component={Pagina2} />
+        <Drawer.Screen name="Agrega Alimentos">
+          {props => <AgregaAlimentos {...props} correoUsuario={correoUsuario} arrayAlimentos={arrayAlimentos} />}
+        </Drawer.Screen>
         <Drawer.Screen name="Cuenta">
           {props => <Cuenta {...props} correoUsuario={correoUsuario} />}
         </Drawer.Screen>

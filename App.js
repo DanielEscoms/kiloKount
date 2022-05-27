@@ -6,7 +6,13 @@ import { Login, Home, Registro } from './screens';
 
 import firebaseApp from './database/Firebase';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { LogBox } from "react-native";
 
+/* Antes de introducir esta función me he cerciorado de que todos los logs que salían fueran
+corregidos, lo he introducido por controlar un warning de async que no lo he podido eliminar.*/
+LogBox.ignoreAllLogs();
+
+//Para que no aparezca el siguiente error: Can't find a variable atob
 import { decode, encode } from 'base-64';
 if (!global.btoa) { global.btoa = encode }
 if (!global.atob) { global.atob = decode }

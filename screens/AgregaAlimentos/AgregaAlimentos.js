@@ -31,27 +31,7 @@ const AgregaAlimentos = (props) => {
     setArrayAlimentos(props.arrayAlimentos);
   }, [props.arrayAlimentos])
 
-  const onChange = (event, selectedDate) => {
-
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === 'ios');
-    setDate(currentDate);
-    let tempDate = new Date(currentDate);
-    let mesCifra = tempDate.getMonth() + 1;
-    if (mesCifra < 10) {
-      mesCifra = '0' + mesCifra.toString();
-    }
-
-    let fDate = tempDate.getDate() + '/' + mesCifra + '/' + tempDate.getFullYear();
-    setFecha(fDate);
-  }
-
-  const showMode = (currentMode) => {
-
-    setShow(true);
-    setMode(currentMode);
-  }
-
+  //Datos necesarios para conectar con la API calorieninjas
   const options = {
 
     method: 'GET',
@@ -59,6 +39,7 @@ const AgregaAlimentos = (props) => {
     headers: { 'X-Api-Key': 'nLw46OBFPXRZtypyMJcJ6Q==h6CNwrcwmBhXEgOX' },
   };
 
+  //Conexión a la API calorieninjas
   const getDatos = () => {
 
     if (alimentoBuscado == '') {
@@ -81,6 +62,38 @@ const AgregaAlimentos = (props) => {
     }).catch(function (error) {
       console.log(error);
     });
+  }
+
+  //Función creada para un correcto funcionamiento del calendario
+  const showMode = (currentMode) => {
+
+    setShow(true);
+    setMode(currentMode);
+  }
+
+  //Función creada para un correcto funcionamiento del calendario complementaria a showMode()
+  const onChange = (event, selectedDate) => {
+
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === 'ios');
+    setDate(currentDate);
+    let tempDate = new Date(currentDate);
+
+    // Modificamos el mes para que siempre tenga dos cifras
+    let mesCifra = tempDate.getMonth() + 1;
+    if (mesCifra < 10) {
+      mesCifra = '0' + mesCifra.toString();
+    }
+    // Modificamos el día para que siempre tenga dos cifras
+    let diaCifra = tempDate.getDate();
+    if (diaCifra < 10) {
+      diaCifra = '0' + diaCifra.toString();
+    }
+
+    //Ahora tiene el formato 'DD/MM/yyyy'
+    let fDate = diaCifra + '/' + mesCifra + '/' + tempDate.getFullYear();
+
+    setFecha(fDate);
   }
 
   const anyadeFechaYPeso = () => {
@@ -133,6 +146,45 @@ const AgregaAlimentos = (props) => {
     DevSettings.reload();
   }
 
+  const cajaAlimento = (alimento) => {
+    return(
+      <View>
+        <View>
+          <Text style={styles.text}>Fecha de consumo del alimento</Text>
+          <Text style={styles.text}>{fecha}</Text>
+          <Button
+            title='Modificar fecha'
+            onPress={() => showMode('date')}
+          />
+
+          {show && (
+            <DateTimePicker
+              testID='dateTimePicker'
+              value={date}
+              mode={mode}
+              display='default'
+              onChange={onChange}
+            />)}
+        </View>
+        <View>
+          <Text style={styles.text}>Cantidad de {alimento.name} ingerida:</Text>
+          <Input
+            placeholder='Introduce el peso en gramos del alimento'
+            keyboardType='decimal-pad'
+            onChangeText={setPesoIntroducido}
+          />
+        </View>
+        <View style={styles.containerButton}>
+          <Button
+            title='Agregar'
+            raised={true}
+            onPress={agregarAlimento}
+          />
+        </View>
+      </View>
+    )
+  }
+
   return (
     <View style={styles.containerPage}>
       <KeyboardAwareScrollView
@@ -157,48 +209,10 @@ const AgregaAlimentos = (props) => {
               />
             </View>
             <View>
-              {(arrayAlimento[0].name !== '') ? (
+              {(arrayAlimento[0].name !== '') && (
                 <View>
-                  {arrayAlimento.map((objetoAlimento) => {
-                    return (
-                      <View>
-                        <View>
-                          <Text style={styles.text}>Fecha de consumo del alimento</Text>
-                          <Text style={styles.text}>{fecha}</Text>
-                          <Button
-                            title='Modificar fecha'
-                            onPress={() => showMode('date')}
-                          />
-
-                          {show && (
-                            <DateTimePicker
-                              testID='dateTimePicker'
-                              value={date}
-                              mode={mode}
-                              display='default'
-                              onChange={onChange}
-                            />)}
-                        </View>
-                        <View>
-                          <Text style={styles.text}>Cantidad de {objetoAlimento.name} ingerida:</Text>
-                          <Input
-                            placeholder='Introduce el peso en gramos del alimento'
-                            keyboardType='decimal-pad'
-                            onChangeText={setPesoIntroducido}
-                          />
-                        </View>
-                        <View style={styles.containerButton}>
-                          <Button
-                            title='Agregar'
-                            raised={true}
-                            onPress={agregarAlimento}
-                          />
-                        </View>
-                      </View>
-                    )
-                  })}
-
-                </View>) : null}
+                  {cajaAlimento(arrayAlimento[0])}
+                </View>)}
             </View>
             <View>
               <View>

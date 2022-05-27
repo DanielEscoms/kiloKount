@@ -28,32 +28,14 @@ const Recuento = (props) => {
     setArrayAlimentos(props.arrayAlimentos);
   }, [props.arrayAlimentos])
 
-  const onChange = (event, selectedDate) => {
-
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === 'ios');
-    setDate(currentDate);
-
-    let tempDate = new Date(currentDate);
-    let mesCifra = tempDate.getMonth() + 1;
-    if (mesCifra < 10) {
-      mesCifra = '0' + mesCifra.toString();
-    }
-
-    let fDate = tempDate.getDate() + '/' + mesCifra + '/' + tempDate.getFullYear();
-
-    if (button1o2) {
-      setFechaFinal(fDate);
-    } else {
-      setFechaInicial(fDate);
-    }
-    setContadorKcal(0);
-  }
-
+  //Función creada para un correcto funcionamiento del calendario
   const showMode = (currentMode, numButton) => {
 
     setShow(true);
     setMode(currentMode);
+
+    /* Se asigna el convenio de que si se pulsa el boton1 (fecha) la constante button1o2 tomará el valor
+     de false y si se pulsa el boton2 (fecha rango) la constante button1o2 tomará el valor de true*/
     if (numButton) {
       setButton1o2(true);
     } else {
@@ -61,11 +43,42 @@ const Recuento = (props) => {
     }
   }
 
-  /*
-  Descripción: función creada para que transforme un string a Pascal Case
-  Input: string
-  Output: string en formato Pascal Case
-  */
+  //Función creada para un correcto funcionamiento del calendario complementaria a showMode()
+  const onChange = (event, selectedDate) => {
+
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === 'ios');
+    setDate(currentDate);
+    let tempDate = new Date(currentDate);
+
+    // Modificamos el mes para que siempre tenga dos cifras
+    let mesCifra = tempDate.getMonth() + 1;
+    if (mesCifra < 10) {
+      mesCifra = '0' + mesCifra.toString();
+    }
+
+    // Modificamos el día para que siempre tenga dos cifras
+    let diaCifra = tempDate.getDate();
+    if (diaCifra < 10) {
+      diaCifra = '0' + diaCifra.toString();
+    }
+
+    let fDate = diaCifra + '/' + mesCifra + '/' + tempDate.getFullYear();
+
+    /*Actualizamos el valor de fecha inicial (boton1 === fecha) o fecha final (boton2 === fecha rango)
+    en función de que botón de calendario se ha selecionado.*/
+    if (button1o2) {
+      setFechaFinal(fDate);
+    } else {
+      setFechaInicial(fDate);
+    }
+
+    /* Reseteamos el valor a 0 de modo que, al cambiar el valor de alguna fecha, el usuario
+    deba volver a pulsar "Calcular total kcal" y que no haya error en los datos.*/
+    setContadorKcal(0);
+  }
+
+  //Transforma un string a formato Pascal Case
   const toPascalCase = (str) => {
 
     return str.replace(/\w\S*/g, m => { return m.charAt(0).toUpperCase() + m.substr(1).toLowerCase() });
@@ -83,6 +96,10 @@ const Recuento = (props) => {
     //actualizar state
     setArrayAlimentos(nuevoArrayAlimentos);
 
+    /* Reseteamos el valor a 0 de modo que, al eliminar algun alimento, el usuario
+    deba volver a pulsar "Calcular total kcal" y que no haya error en los datos.*/
+    setContadorKcal(0);
+
     return;
   }
 
@@ -90,6 +107,7 @@ const Recuento = (props) => {
 
     let caloriasTotal = 0;
     arrayAlimentos.map((alimento) => {
+      //Se sumaran los valores de kcal si se encuentra dentro del rango de fechas.
       if (fechaInicial <= alimento.date && alimento.date <= fechaFinal || fechaInicial >= alimento.date && alimento.date >= fechaFinal) {
         caloriasTotal = caloriasTotal + alimento.calories;
       }
@@ -102,7 +120,8 @@ const Recuento = (props) => {
     DevSettings.reload();
   }
 
-  const compruebaRangoFechas = (alimento) => {
+  /*Muestra por pantalla los alimentos y alguna característica de los que se encuentren dentro del rango de fechas*/
+  const cajonAlimento = (alimento) => {
 
     if (fechaInicial <= alimento.date && alimento.date <= fechaFinal || fechaInicial >= alimento.date && alimento.date >= fechaFinal) {
 
@@ -169,15 +188,15 @@ const Recuento = (props) => {
                 onChange={onChange}
               />)}
           </View>
-          {(fechaInicial !== fechaFinal) ? (
+          {(fechaInicial !== fechaFinal) && (
             <View>
               <Text>hasta el día (incluído)</Text>
               <Text>{fechaFinal}</Text>
               <Button
-                title='Seleccionar fecha rango'
+                title='Fecha rango'
                 onPress={() => showMode('date', true)}
               />
-            </View>) : null}
+            </View>)}
         </View>
       </View>
       <KeyboardAwareScrollView
@@ -187,11 +206,11 @@ const Recuento = (props) => {
         <View style={styles.container1}>
           {(arrayAlimentos != null) ? (
             <View>
-              {arrayAlimentos.map((objetoAlimento) => {
-                return (
-                  compruebaRangoFechas(objetoAlimento)
-                )
-              })}
+              {arrayAlimentos.map((objetoAlimento) => (
+                <View key={objetoAlimento.uid}>
+                  {cajonAlimento(objetoAlimento)}
+                </View>
+                ))}
             </View>
           ) : <View><Text>Refrescando, espere por favor.</Text></View>}
         </View>
@@ -203,10 +222,10 @@ const Recuento = (props) => {
           raised={true}
           onPress={calculaTotal}
         />
-        {(contadorKcal !== 0) ? (
+        {(contadorKcal !== 0) && (
           <View>
             <Text>El total de calorias ingeridas es de {contadorKcal} kcal</Text>
-          </View>) : null}
+          </View>)}
       </View>
     </View>
   )

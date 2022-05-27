@@ -20,13 +20,15 @@ export default function LoginScreen({ navigation }) {
 
     const onLoginPress = () => {
 
+        /*Llamamos a la API Auth y signInWithEmailAndPassword de Firebase, que comprueba 
+        si la cuenta ya está registrada y está en Firebase Console -> Tabla de autenticación.*/
         signInWithEmailAndPassword(authentication, email, password)
             .then((response) => {
 
                 alert(`Se ha iniciado sesión correctamente.\n\n* E-mail: ${email}`);
 
-                //Aplico una espera de tiempo y reload para volver a cargar la aplicación una vez se haya generado un almacenamiento 
-                //en la base de datos, de este modo me evito que hayan errores durante la introducción de alimentos.
+                /*Aplico una espera de tiempo y reload para volver a cargar la aplicación una vez se haya generado un almacenamiento 
+                en la base de datos, de este modo me evito que hayan errores durante la introducción de alimentos.*/
                 setTimeout(function () {
                     DevSettings.reload();
                 }, 3000);
