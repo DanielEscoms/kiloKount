@@ -138,7 +138,7 @@ const Recuento = (props) => {
           </View>
           <View>
             <View>
-              <Text>{alimento.calories} kcal</Text>
+              <Text>{(Math.round(alimento.calories * 100) / 100)} kcal</Text>
             </View>
             <View>
               <Text>{alimento.date}</Text>
