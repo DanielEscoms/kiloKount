@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Text, StyleSheet, View, Platform, DevSettings } from 'react-native';
+import { Text, TouchableOpacity, View, Platform, DevSettings } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Button } from 'react-native-elements';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
-
+import styles from './styles';
 import firebaseApp from '../../database/Firebase';
 import { initializeFirestore, doc, updateDoc } from 'firebase/firestore';
 
@@ -126,31 +125,21 @@ const Recuento = (props) => {
     if (fechaInicial <= alimento.date && alimento.date <= fechaFinal || fechaInicial >= alimento.date && alimento.date >= fechaFinal) {
 
       return (
-        <View>
-          <Text> </Text>
+        <View style={styles.containerAlimento}>
           <View>
             <View>
-              <Text>{toPascalCase(alimento.name)}</Text>
+              <Text style={styles.text}>{toPascalCase(alimento.name)}  {alimento.date}</Text>
             </View>
             <View>
-              <Text>{alimento.serving_size_g} g</Text>
+              <Text style={styles.text}>{alimento.serving_size_g} g  ---{'>'}  {(Math.round(alimento.calories * 100) / 100)} kcal</Text>
             </View>
           </View>
-          <View>
-            <View>
-              <Text>{(Math.round(alimento.calories * 100) / 100)} kcal</Text>
-            </View>
-            <View>
-              <Text>{alimento.date}</Text>
-            </View>
-            <View>
-              <Button
-                title='Eliminar Alimento'
-                raised={true}
-                onPress={() => eliminaAlimento(alimento.uid)}
-              />
-            </View>
-          </View>
+          <TouchableOpacity
+            style={styles.buttonEliminar}
+            onPress={() => eliminaAlimento(alimento.uid)}>
+            <Text style={styles.buttonTitle}>Eliminar</Text>
+          </TouchableOpacity>
+          
         </View>
       )
     } else {
@@ -158,52 +147,53 @@ const Recuento = (props) => {
     }
 
   }
-
+  
   return (
     <View style={styles.containerPage}>
-      <View>
-        <View>
-          <Text>Refresca para actualizar los alimentos</Text>
-          <Button
-            title='Refrescar'
-            raised={true}
-            onPress={refrescar}
-          />
+      <View style={styles.container1}>
+        <View style={styles.container1Refresco}>
+          <Text style={styles.textRefresco}>Refresca para actualizar los alimentos</Text>
+          <TouchableOpacity
+            style={styles.buttonRefresco}
+            onPress={refrescar}>
+            <Text style={styles.buttonTitle}>Refrescar</Text>
+          </TouchableOpacity>
         </View>
         <View>
-          <View>
-            <Text>Alimentos almacenados del día</Text>
-            <Text>{fechaInicial}</Text>
-            <Button
-              title='Seleccionar fecha'
-              onPress={() => showMode('date', false)}
-            />
-
-            {show && (
-              <DateTimePicker
-                testID='dateTimePicker'
-                value={date}
-                mode={mode}
-                display='default'
-                onChange={onChange}
-              />)}
+          <View style={styles.container1Fecha1}>
+            <Text style={styles.text}>Alimentos almacenados del día {fechaInicial}</Text>
+            <TouchableOpacity
+              style={styles.buttonFecha}
+              onPress={() => showMode('date', false)}>
+              <Text style={styles.buttonTitle}>Modificar fecha</Text>
+            </TouchableOpacity>
           </View>
           {(fechaInicial !== fechaFinal) && (
-            <View>
-              <Text>hasta el día (incluído)</Text>
-              <Text>{fechaFinal}</Text>
-              <Button
-                title='Fecha rango'
-                onPress={() => showMode('date', true)}
-              />
-            </View>)}
+            <View style={styles.container1Fecha2}>
+              <Text style={styles.text}>hasta el día {fechaFinal}      </Text>
+              <TouchableOpacity
+                style={styles.buttonFecha}
+                onPress={() => showMode('date', true)}>
+                <Text style={styles.buttonTitle}>Fecha rango</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          {show && (
+            <DateTimePicker
+              testID='dateTimePicker'
+              value={date}
+              mode={mode}
+              display='default'
+              onChange={onChange}
+            />
+          )}
         </View>
       </View>
       <KeyboardAwareScrollView
         style={{ flex: 1, width: '100%' }}
         keyboardShouldPersistTaps="always">
 
-        <View style={styles.container1}>
+        <View style={styles.container}>
           {(arrayAlimentos != null) ? (
             <View>
               {arrayAlimentos.map((objetoAlimento) => (
@@ -212,50 +202,23 @@ const Recuento = (props) => {
                 </View>
                 ))}
             </View>
-          ) : <View><Text>Refrescando, espere por favor.</Text></View>}
+          ) : <View><Text style={styles.text}>Refrescando, espere por favor.</Text></View>}
         </View>
       </KeyboardAwareScrollView>
       <View>
-        <Text> </Text>
-        <Button
-          title='Calcular total kcal'
-          raised={true}
-          onPress={calculaTotal}
-        />
+        <TouchableOpacity
+          style={styles.buttonTotal}
+          onPress={calculaTotal}>
+          <Text style={styles.buttonTitle}>Calcular total kcal</Text>
+        </TouchableOpacity>
         {(contadorKcal !== 0) && (
-          <View>
-            <Text>El total de calorias ingeridas es de {contadorKcal} kcal</Text>
+          <View  style={styles.textRecuento}>
+            <Text style={styles.text}>El total de calorias ingeridas es de</Text>
+            <Text style={styles.textKcal}>{contadorKcal} kcal</Text>
           </View>)}
       </View>
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  containerPage: {
-    backgroundColor: '#7CFF14',
-    flex: 1,
-    padding: 10,
-  },
-  container1: {
-    backgroundColor: '#46FF7A',
-    padding: 10,
-  },
-  fechaInicial: {
-    fontSize: 25,
-  },
-  containerButton: {
-    padding: 10,
-  },
-  layout: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 8,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-});
 
 export default Recuento;

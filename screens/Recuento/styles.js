@@ -1,52 +1,118 @@
 /* eslint-disable prettier/prettier */
 import { StyleSheet } from 'react-native';
-
+//Recuento
 export default StyleSheet.create({
-    container: {
+    containerPage: {
+        backgroundColor: '#7CFF14',
         flex: 1,
+        padding: 8
+    },
+    container1: {
+        padding: 5
+    },
+    container1Refresco: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingBottom: 5,
+        borderBottomWidth: 0.5
+    },
+    container: {
+        backgroundColor: '#46FF7A',
+        padding: 10
+    },
+    container1Fecha1: {
+        marginTop: 5,
+        paddingTop: 5,
+        paddingRight: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: 240,
         alignItems: 'center'
     },
-    title: {
-
+    container1Fecha2: {
+        paddingTop: 5,
+        marginBottom: 5,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: 240,
+        alignItems: 'center'
     },
-    input: {
-        height: 48,
-        borderRadius: 5,
-        overflow: 'hidden',
-        backgroundColor: 'white',
-        marginTop: 10,
-        marginBottom: 10,
-        marginLeft: 30,
-        marginRight: 30,
-        paddingLeft: 16
-    },
-    button: {
-        backgroundColor: '#788eec',
-        marginLeft: 30,
-        marginRight: 30,
-        marginTop: 20,
-        height: 48,
-        borderRadius: 5,
-        alignItems: "center",
-        justifyContent: 'center'
+    containerAlimento: {
+        marginTop: 7,
+        borderBottomWidth: 0.5,
+        paddingBottom: 7,
+        paddingRight: 5,
+        paddingLeft: 5,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
     },
     buttonTitle: {
         color: 'white',
-        fontSize: 16,
-        fontWeight: "bold"
-    },
-    footerView: {
-        flex: 1,
-        alignItems: "center",
-        marginTop: 20
-    },
-    footerText: {
-        fontSize: 16,
-        color: '#2e2e2d'
-    },
-    footerLink: {
-        color: "#788eec",
+        fontSize: 18,
         fontWeight: "bold",
-        fontSize: 16
-    }
+        marginLeft: 20,
+        marginRight: 20
+    },
+    buttonFecha: {
+        backgroundColor: '#2C5FDD',
+        height: 48,
+        borderRadius: 30,
+        alignItems: "center",
+        justifyContent: 'center'
+    },
+    buttonRefresco: {
+        backgroundColor: '#2C5FDD',
+        width: 135,
+        marginTop: 5,
+        marginBottom: 5,
+        height: 48,
+        borderRadius: 30,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    buttonEliminar: {
+        backgroundColor: '#2C5FDD',
+        width: 110,
+        marginTop: 5,
+        marginBottom: 5,
+        height: 48,
+        borderRadius: 30,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    buttonTotal: {
+        backgroundColor: '#2C5FDD',
+        marginLeft: 100,
+        marginRight: 100,
+        marginTop: 5,
+        marginBottom: 5,
+        height: 48,
+        borderRadius: 30,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    text: {
+        fontSize: 20,
+        color: '#000000'
+    },
+    textRefresco: {
+        fontSize: 20,
+        color: '#000000',
+        width: 240
+    },
+    textRecuento: {
+        fontSize: 20,
+        backgroundColor: '#46FF7A',
+        color: '#000000',
+        paddingHorizontal: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
+        alignContent: 'space-around'
+    },
+    textKcal: {
+        fontSize: 20,
+        color: '#000000',
+        fontWeight: 'bold'
+    },
 })

@@ -1,19 +1,20 @@
 /* eslint-disable prettier/prettier */
 import { StyleSheet } from 'react-native';
-
+//Registro
 export default StyleSheet.create({
-    container: {
+    containerPage: {
         flex: 1,
-        alignItems: 'center'
-    },
-    title: {
-
+        alignItems: 'center',
+        backgroundColor: '#7CFF14'
     },
     input: {
         height: 48,
+        fontSize: 16,        
         borderRadius: 5,
+        borderColor: '#05BB13',
+        borderWidth: 2,
         overflow: 'hidden',
-        backgroundColor: 'white',
+        backgroundColor: '#B7F77F',
         marginTop: 10,
         marginBottom: 10,
         marginLeft: 30,
@@ -21,7 +22,7 @@ export default StyleSheet.create({
         paddingLeft: 16
     },
     button: {
-        backgroundColor: '#788eec',
+        backgroundColor: '#2C5FDD',
         marginLeft: 30,
         marginRight: 30,
         marginTop: 20,
@@ -42,10 +43,10 @@ export default StyleSheet.create({
     },
     footerText: {
         fontSize: 16,
-        color: '#2e2e2d'
+        color: '#000000'
     },
     footerLink: {
-        color: "#788eec",
+        color: "#2C5FDD",
         fontWeight: "bold",
         fontSize: 16
     }

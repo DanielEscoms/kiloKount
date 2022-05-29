@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import { AgregaAlimentos, Recuento, Cuenta } from '../';
-import styles from './styles';
-
 import firebaseApp from '../../database/Firebase';
 import { initializeFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 
@@ -57,7 +55,7 @@ export default function HomeScreen(props) {
 
   return (
     <NavigationContainer independent={true}>
-      <Drawer.Navigator options="false" initialRouteName="Recuento kcal" style={styles.container}>
+      <Drawer.Navigator options="false" initialRouteName="Recuento kcal">
         <Drawer.Screen name="Recuento kcal">
           {props => <Recuento {...props} correoUsuario={correoUsuario} arrayAlimentos={arrayAlimentos} />}
         </Drawer.Screen>

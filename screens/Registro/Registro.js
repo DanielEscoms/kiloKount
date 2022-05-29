@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Text, TextInput, TouchableOpacity, View, DevSettings } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import styles from './styles';
-
 import firebaseApp from '../../database/Firebase';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 
@@ -79,7 +78,7 @@ export default function RegistrationScreen({ navigation }) {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={styles.containerPage}>
             <KeyboardAwareScrollView
                 style={{ flex: 1, width: '100%' }}
                 keyboardShouldPersistTaps="always">

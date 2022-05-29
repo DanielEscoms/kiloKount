@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { Text, StyleSheet, View, DevSettings } from 'react-native';
+import { Text, TextInput, TouchableOpacity, View, DevSettings } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Button, Input } from 'react-native-elements';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import uuid from 'react-native-uuid';
-
+import styles from './styles';
 import firebaseApp from '../../database/Firebase';
 import { initializeFirestore, doc, updateDoc } from 'firebase/firestore';
 
@@ -149,13 +148,16 @@ const AgregaAlimentos = (props) => {
   const cajaAlimento = (alimento) => {
     return(
       <View>
-        <View>
+        <View style={styles.container2Fecha}>
           <Text style={styles.text}>Fecha de consumo del alimento</Text>
-          <Text style={styles.text}>{fecha}</Text>
-          <Button
-            title='Modificar fecha'
-            onPress={() => showMode('date')}
-          />
+          <View style={styles.fecha}>
+            <Text style={styles.text}>{fecha}</Text>
+            <TouchableOpacity
+              style={styles.buttonFecha}
+              onPress={() => showMode('date')}>
+              <Text style={styles.buttonTitle}>Modificar fecha</Text>
+            </TouchableOpacity>
+          </View>
 
           {show && (
             <DateTimePicker
@@ -166,20 +168,23 @@ const AgregaAlimentos = (props) => {
               onChange={onChange}
             />)}
         </View>
-        <View>
+        <View style={styles.container2Peso}>
           <Text style={styles.text}>Cantidad de {alimento.name} ingerida:</Text>
-          <Input
-            placeholder='Introduce el peso en gramos del alimento'
-            keyboardType='decimal-pad'
-            onChangeText={setPesoIntroducido}
-          />
-        </View>
-        <View style={styles.containerButton}>
-          <Button
-            title='Agregar'
-            raised={true}
-            onPress={agregarAlimento}
-          />
+          <TextInput
+              style={styles.input}
+              placeholder='Introduce el peso en gramos del alimento'
+              placeholderTextColor="#aaaaaa"
+              keyboardType='decimal-pad'
+              onChangeText={setPesoIntroducido}
+              value={pesoIntroducido}
+              underlineColorAndroid="transparent"
+              autoCapitalize="none"
+            />
+            <TouchableOpacity
+              style={styles.buttonAgregar}
+              onPress={agregarAlimento}>
+              <Text style={styles.buttonTitle}>Agregar</Text>
+            </TouchableOpacity>
         </View>
       </View>
     )
@@ -191,71 +196,41 @@ const AgregaAlimentos = (props) => {
         style={{ flex: 1, width: '100%' }}
         keyboardShouldPersistTaps="always">
 
-        <View style={styles.container1}>
-          <View>
-            <View>
-              <Text style={styles.text}>Agregue alimentos a la base de datos: </Text>
-              <Input
-                value={alimentoBuscado}
-                placeholder='Nombre del alimento en inglés'
-                onChangeText={setAlimentoBuscado}
-              />
-            </View>
-            <View>
-              <Button
-                title='Consultar Alimento'
-                raised={true}
-                onPress={getDatos}
-              />
-            </View>
-            <View>
-              {(arrayAlimento[0].name !== '') && (
-                <View>
-                  {cajaAlimento(arrayAlimento[0])}
-                </View>)}
-            </View>
-            <View>
+        <View style={styles.container}>
+          <View style={styles.container1}>
+            <Text style={styles.text}>Agregue alimento a la base de datos: </Text>
+            <TextInput
+              style={styles.input}
+              placeholder='Nombre en INGLÉS de 1 alimento'
+              placeholderTextColor="#aaaaaa"
+              onChangeText={setAlimentoBuscado}
+              value={alimentoBuscado}
+              underlineColorAndroid="transparent"
+              autoCapitalize="none"
+            />
+            <TouchableOpacity
+              style={styles.buttonConsultar}
+              onPress={getDatos}>
+              <Text style={styles.buttonTitle}>Consultar Alimento</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.container2}>
+            {(arrayAlimento[0].name !== '') && (
               <View>
-                <Text> </Text>
-                <Button
-                  title='Ver alimentos agregados'
-                  raised={true}
-                  onPress={refrescar}
-                />
-              </View>
-            </View>
+                {cajaAlimento(arrayAlimento[0])}
+              </View>)}
+          </View>
+          <View style={styles.container3}>
+            <TouchableOpacity
+              style={styles.buttonRefresco}
+              onPress={refrescar}>
+              <Text style={styles.buttonTitle}>Ver alimentos agregados</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </KeyboardAwareScrollView>
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  containerPage: {
-    backgroundColor: '#7CFF14',
-    flex: 1,
-    padding: 10,
-  },
-  container1: {
-    backgroundColor: '#46FF7A',
-    padding: 10,
-  },
-  text: {
-    fontSize: 20,
-  },
-  containerButton: {
-    padding: 10,
-  },
-  layout: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 8,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-});
 
 export default AgregaAlimentos;

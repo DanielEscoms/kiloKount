@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Login, Home, Registro } from './screens';
-
 import firebaseApp from './database/Firebase';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { LogBox } from "react-native";
