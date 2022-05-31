@@ -111,8 +111,11 @@ const Recuento = (props) => {
         caloriasTotal = caloriasTotal + alimento.calories;
       }
     })
-
-    setContadorKcal(Math.round(caloriasTotal * 100) / 100);
+    if (caloriasTotal !==0) {
+      setContadorKcal(Math.round(caloriasTotal * 100) / 100);
+    } else {
+      alert("No hay alimentos agregados para la fecha selecionada, por favor, refresque para actualizar o agregue algún alimento.");
+    }
   }
 
   const refrescar = () => {
